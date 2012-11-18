@@ -5,8 +5,8 @@ class universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.1';
-		$this->author = 'PrestaLab';
+		$this->version = '1.2';
+		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';
 
@@ -17,13 +17,13 @@ class universalpay extends PaymentModule
 
 		$this->displayName = $this->l('Universal Payment Module');
 		$this->description = $this->l('Payment methods creating.');
-		require_once(dirname(__FILE__). '/UniPaySystem.php');
 	}
 
 	public function install()
 	{
 		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system` (
 				`id_universalpay_system` INT(10) NOT NULL AUTO_INCREMENT,
+				`id_order_state` INT( 10 ) NOT NULL DEFAULT  '".Configuration::get('PS_OS_PREPARATION')."',
 				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
 				`position` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 				`date_add` DATETIME NOT NULL,
@@ -36,6 +36,7 @@ class universalpay extends PaymentModule
 				`name` VARCHAR(128) NOT NULL,
 				`description_short` VARCHAR(255) NOT NULL,
 				`description` TEXT NULL,
+				`description_success` TEXT NULL,
 				UNIQUE INDEX `universalpay_system_lang_index` (`id_universalpay_system`, `id_lang`)
 			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
 		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_carrier` (
@@ -48,6 +49,11 @@ class universalpay extends PaymentModule
 		       && $this->registerHook('displayPayment')
 		       && mkdir(_PS_IMG_DIR_.'pay')
 		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems'), 'AdminParentModules');
+	}
+
+	public function upgrade_module_1_2_0($object)
+	{
+		Db::getInstance()->Execute("ALTER TABLE  `"._DB_PREFIX_."universalpay_system_lang` ADD  `description_success` TEXT NULL");
 	}
 
 	public function uninstall()
@@ -118,6 +124,8 @@ class universalpay extends PaymentModule
 			return ;
 		if (!$this->_checkCurrency($params['cart']))
 			return ;
+
+		require_once(dirname(__FILE__). '/UniPaySystem.php');
 
 		$this->smarty->assign(array(
 			'this_path' => $this->_path,

@@ -3,6 +3,7 @@ class UniPaySystem extends ObjectModel
 {
 	public  $id;
 	public  $active = 1;
+	public  $id_order_state=3;
 	public  $position;
 	public  $date_add;
 	public  $date_upd;
@@ -10,6 +11,7 @@ class UniPaySystem extends ObjectModel
 	public  $name;
 	public  $description_short;
 	public  $description;
+	public  $description_success;
 
 	public  $image_dir;
 
@@ -22,19 +24,21 @@ class UniPaySystem extends ObjectModel
 		'fields' => array(
 			/* Classic fields */
 			'active' => 				array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => true),
-			'date_add' => 					array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
-			'date_upd' => 					array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
+			'date_add' => 				array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
+			'date_upd' => 				array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
+			'id_order_state' => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
 
 			/* Lang fields */
 			'name' => 					array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 128),
-			'description' => 				array('type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isString'),
-			'description_short' => 			array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 256),
+			'description' => 			array('type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isString'),
+			'description_success' => 	array('type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isString'),
+			'description_short' => 		array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 256),
 		),
 	);
 
 	public function __construct($id = NULL, $id_lang = NULL){
 		$this->image_dir=_PS_IMG_DIR_.'pay/';
-		parent::__construct($id, $id_lang);
+		return parent::__construct($id, $id_lang);
 	}
 	
 	public static function getPaySystems($id_lang, $active = true, $id_carrier=false)

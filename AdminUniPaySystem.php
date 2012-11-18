@@ -92,11 +92,33 @@ class AdminUniPaySystem extends AdminController
 					'desc' => $this->l('%total% will be replaced with total amount.')
 				),
 				array(
+					'type' => 'textarea',
+					'label' => $this->l('Description success:'),
+					'name' => 'description_success',
+					'autoload_rte' => true,
+					'lang' => true,
+					'rows' => 5,
+					'cols' => 40,
+					'hint' => $this->l('Invalid characters:').' <>;=#{}',
+					'desc' => $this->l('%order_number% will be replaced with invoice number, %total% will be replaced with total amount.')
+				),
+				array(
 					'type' => 'file',
 					'label' => $this->l('Image:'),
 					'name' => 'logo',
 					'display_image' => true,
 					'desc' => $this->l('Upload payment logo from your computer')
+				),
+				array(
+					'type' => 'select',
+					'label' => $this->l('Order state:'),
+					'name' => 'id_order_state',
+					'desc' =>$this->l('Order state after create.'),
+					'options' => array(
+						'query' => OrderState::getOrderStates($this->context->language->id),
+						'name' => 'name',
+						'id' => 'id_order_state'
+					)
 				),
 				array(
 					'type' => 'checkbox',
@@ -133,6 +155,7 @@ class AdminUniPaySystem extends AdminController
 	public function postProcess()
 	{
 		$return=parent::postProcess();
+
 		if (Tools::getValue('submitAdd'.$this->table)&&Validate::isLoadedObject($return))
 		{
 			$carriers=Carrier::getCarriers($this->context->language->iso_code);

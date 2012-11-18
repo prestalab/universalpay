@@ -13,6 +13,7 @@ class universalpaypaymentModuleFrontController extends ModuleFrontController
 
 		$cart = $this->context->cart;
 
+		require_once(dirname(__FILE__). '/../../UniPaySystem.php');
 		$paysistem=new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
 
 		if(!Validate::isLoadedObject($paysistem))
