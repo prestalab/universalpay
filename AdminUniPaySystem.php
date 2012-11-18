@@ -1,0 +1,147 @@
+<?php
+//require_once(dirname(__FILE__).'/../../classes/AdminTab.php');
+require_once (dirname(__FILE__).'/UniPaySystem.php');
+
+class AdminUniPaySystem extends AdminController
+{
+	public function __construct()
+	{
+	 	$this->table = 'universalpay_system';
+	 	$this->className = 'UniPaySystem';
+	 	$this->lang = true;
+
+		$this->addRowAction('edit');
+		$this->addRowAction('delete');
+
+ 		$this->fieldImageSettings = array('name' => 'logo', 'dir' => 'pay');
+
+		$this->fields_list = array(
+		'id_universalpay_system' => array('title' => $this->l('ID'), 'align' => 'center', 'width' => 30),
+		'logo' => array('title' => $this->l('Logo'), 'align' => 'center', 'image' => 'pay', 'orderby' => false, 'search' => false),
+		'name' => array('title' => $this->l('Name'), 'width' => 150),
+		'description_short' => array('title' => $this->l('Short description'), 'width' => 450, 'maxlength' => 90, 'orderby' => false),
+		'active' => array('title' => $this->l('Displayed'), 'active' => 'status', 'align' => 'center', 'type' => 'bool', 'orderby' => false)
+		);
+
+		parent::__construct();
+	}
+
+
+	public function renderForm()
+	{
+		$this->display = 'edit';
+		$this->initToolbar();
+
+		if (!$this->loadObject(true))
+			return;
+
+		$this->fields_form = array(
+			'legend' => array(
+				'title' => $this->l('Payment Systems'),
+				'image' => '../img/admin/tab-categories.gif'
+			),
+			'input' => array(
+				array(
+					'type' => 'text',
+					'label' => $this->l('Name:'),
+					'name' => 'name',
+					'required' => true,
+					'lang' => true,
+					'class' => 'copy2friendlyUrl',
+					'hint' => $this->l('Invalid characters:').' <>;=#{}'
+				),
+				array(
+					'type' => 'radio',
+					'label' => $this->l('Displayed:'),
+					'name' => 'active',
+					'required' => false,
+					'class' => 't',
+					'is_bool' => true,
+					'values' => array(
+						array(
+							'id' => 'active_on',
+							'value' => 1,
+							'label' => $this->l('Enabled')
+						),
+						array(
+							'id' => 'active_off',
+							'value' => 0,
+							'label' => $this->l('Disabled')
+						)
+					),
+				),
+				array(
+					'type' => 'textarea',
+					'label' => $this->l('Short description:'),
+					'name' => 'description_short',
+					'lang' => true,
+					'rows' => 5,
+					'cols' => 40,
+					'hint' => $this->l('Invalid characters:').' <>;=#{}',
+					'desc' => $this->l('Displayed in payment selection page.')
+				),
+				array(
+					'type' => 'textarea',
+					'label' => $this->l('Description:'),
+					'name' => 'description',
+					'autoload_rte' => true,
+					'lang' => true,
+					'rows' => 5,
+					'cols' => 40,
+					'hint' => $this->l('Invalid characters:').' <>;=#{}',
+					'desc' => $this->l('%total% will be replaced with total amount.')
+				),
+				array(
+					'type' => 'file',
+					'label' => $this->l('Image:'),
+					'name' => 'logo',
+					'display_image' => true,
+					'desc' => $this->l('Upload payment logo from your computer')
+				),
+				array(
+					'type' => 'checkbox',
+					'label' => $this->l('Carriers:'),
+					'name' => 'carrierBox',
+					'values' => array(
+						'query' => Carrier::getCarriers($this->context->language->iso_code),
+						'id' => 'id_carrier',
+						'name' => 'name'
+					),
+					'desc' => $this->l('The carriers in which this paysystem is to be used')
+				)
+			),
+			'submit' => array(
+				'title' => $this->l('   Save   '),
+				'class' => 'button'
+			)
+		);
+		
+		if (!($obj = $this->loadObject(true)))
+			return;
+
+		// Added values of object Group
+		$universalpay_system_carrier_ids = $obj->getCarriers();
+
+		$carriers = Carrier::getCarriers($this->context->language->id);
+
+		foreach ($carriers as $carrier)
+			$this->fields_value['carrierBox_'.$carrier['id_carrier']] = Tools::getValue('carrierBox_'.$carrier['id_carrier'], (in_array($carrier['id_carrier'], $universalpay_system_carrier_ids)));
+
+		return parent::renderForm();
+	}
+
+	public function postProcess()
+	{
+		$return=parent::postProcess();
+		if (Tools::getValue('submitAdd'.$this->table)&&Validate::isLoadedObject($return))
+		{
+			$carriers=Carrier::getCarriers($this->context->language->iso_code);
+			$carrierBox=array();
+			foreach ($carriers as $carrier)
+				if (isset($_POST['carrierBox_'.$carrier['id_carrier']]))
+					$carrierBox[]=$carrier['id_carrier'];
+			$return->updateCarriers($carrierBox);
+		}
+		return $return;
+	}
+}
