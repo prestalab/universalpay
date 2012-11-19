@@ -6,7 +6,7 @@ Allows you to bind to a payment to carrier
 It does not require programming skills
 
 v 1.3
-+ added payment success page
++ added confirmation button on payment systems page
 
 v 1.2
 + added payment success page
