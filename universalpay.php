@@ -46,9 +46,9 @@ class universalpay extends PaymentModule
 		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
 
 		return parent::install()
-		       && $this->registerHook('displayPayment')
+		       && $this->registerHook('payment')
 		       && mkdir(_PS_IMG_DIR_.'pay')
-		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems'), 'AdminParentModules');
+		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems'), 'AdminModules');
 	}
 
 	public function uninstall()
@@ -113,7 +113,7 @@ class universalpay extends PaymentModule
 		return false;
 	}
 
-	public function hookdisplayPayment($params)
+	public function hookPayment($params)
 	{
 		if (!$this->active)
 			return ;
@@ -121,8 +121,9 @@ class universalpay extends PaymentModule
 			return ;
 
 		require_once(dirname(__FILE__). '/UniPaySystem.php');
+		global $smarty, $cookie, $cart;
 
-		$paysystems=UniPaySystem::getPaySystems($this->context->cookie->id_lang, true, $this->context->cart->id_carrier);
+		$paysystems=UniPaySystem::getPaySystems($cookie->id_lang, true, $cart->id_carrier);
 		foreach($paysystems as &$paysystem)
 			$paysystem['description']=str_replace(
 				array('%total%'),
@@ -130,12 +131,14 @@ class universalpay extends PaymentModule
 				$paysystem['description']
 			);
 		unset($paysystem);
-		$this->smarty->assign(array(
+
+		$smarty->assign(array(
 			'this_path' => $this->_path,
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
 			'universalpay' => $paysystems,
 			'universalpay_onepage' => Configuration::get('universalpay_onepage'),
 		));
+
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 	
@@ -158,90 +161,50 @@ class universalpay extends PaymentModule
 		return $this->_html;
 	}
 
-	private function initToolbar()
+	public function getPathFile()
 	{
-		$this->toolbar_btn['save'] = array(
-			'href' => '#',
-			'desc' => $this->l('Save')
-		);
-		return $this->toolbar_btn;
+		return __FILE__;
 	}
 
-	protected function _displayForm()
+	private function _displayForm()
 	{
-		$this->_display = 'index';
+		$this->_html .= '
+		<fieldset style="width: 300px;float:right;margin-left:15px;">
+			<legend><img src="../img/admin/manufacturers.gif"/> ' . $this->l('Information') . '</legend>
+			<div id="dev_div">
+				<span><strong>' . $this->l('Version') . ':</strong> ' . $this->version . '</span><br>
+				<span><strong>' . $this->l('License') . ':</strong> <a class="link" href="http://www.opensource.org/licenses/osl-3.0.php" target="_blank">OSL 3.0</a></span><br>
+				<span><strong>' . $this->l('Developer') . ':</strong> <a class="link" href="mailto:admin@prestalab.ru" target="_blank">' . $this->author . '</a><br>
+				<span><strong>' . $this->l('Description') . ':</strong> <a class="link" href="http://prestalab.ru/" target="_blank">PrestaLab.ru</a><br>
+				<p style="text-align:center"><a href="http://prestalab.ru/"><img src="http://prestalab.ru/upload/banner.png" alt="' . $this->l('Modules and Templates for PrestaShop') . '"/></a></p>
+			</div>
+		</fieldset>
+		<form action="' . $_SERVER['REQUEST_URI'] . '" method="post">
+			<fieldset>
+				<legend><img src="../img/admin/contact.gif" alt=""/>' . $this->l('Settings') . '</legend>
+					<label for="universalpay_onepage">' . $this->l('Confirmation button') . '</label>
+					<div class="margin-form">
+						<input type="radio" name="universalpay_onepage" id="universalpay_onepage_on" value="1" '.(Tools::getValue('universalpay_onepage', Configuration::get('universalpay_onepage')) ? 'checked="checked" ' : '').'/>
+						<label class="t" for="universalpay_onepage_on"> <img src="../img/admin/enabled.gif" alt="'.$this->l('Enabled').'" title="'.$this->l('Enabled').'" /></label>
+						<input type="radio" name="universalpay_onepage" id="universalpay_onepage_off" value="0" '.(!Tools::getValue('universalpay_onepage', Configuration::get('universalpay_onepage')) ? 'checked="checked" ' : '').'/>
+						<label class="t" for="universalpay_onepage_off"> <img src="../img/admin/disabled.gif" alt="'.$this->l('Disabled').'" title="'.$this->l('Disabled').'" /></label>
+						<p class="clear">' . $this->l('Confirmation button on paysystems page') . '</p>
+					</div>
 
-
-		$this->fields_form[0]['form'] = array(
-			'legend' => array(
-				'title' => $this->l('Settings'),
-				'image' => _PS_ADMIN_IMG_.'information.png'
-			),
-			'description'=>$this->l('Add payment methods on').' <a href="?tab=AdminUniPaySystem&token='.Tools::getAdminToken('AdminUniPaySystem'.(int)(Tab::getIdFromClassName('AdminUniPaySystem')).(int)($this->context->cookie->id_employee)).'" class="link">'.$this->l('Payments>Pay Systems tab').'</a>',
-			'input' => array(
-				array(
-					'type' => 'radio',
-					'label' => $this->l('Confirmation button'),
-					'desc' => $this->l('Confirmation button on paysystems page'),
-					'name' => 'universalpay_onepage',
-					'class' => 't',
-					'is_bool' => true,
-					'values' => array(
-						array(
-							'id' => 'universalpay_onepage_on',
-							'value' => 1,
-							'label' => $this->l('Enabled')
-						),
-						array(
-							'id' => 'universalpay_onepage_off',
-							'value' => 0,
-							'label' => $this->l('Disabled')
-						)
-					)
-				),
-			),
-
-			'submit' => array(
-				'name' => 'submitSave',
-				'title' => $this->l('Save'),
-				'class' => 'button'
-			)
-		);
-
-		$this->fields_value['universalpay_onepage'] = Configuration::get('universalpay_onepage');
-
-
-		$helper = $this->initForm();
-		$helper->submit_action = '';
-
-		$helper->title = $this->displayName;
-
-		$helper->fields_value = $this->fields_value;
-		$this->_html .= $helper->generateForm($this->fields_form);
-		return;
-	}
-
-	private function initForm()
-	{
-		$helper = new HelperForm();
-
-		$helper->module = $this;
-		$helper->name_controller = 'universalpay';
-		$helper->identifier = $this->identifier;
-		$helper->token = Tools::getAdminTokenLite('AdminModules');
-		$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-		$helper->toolbar_scroll = true;
-		$helper->tpl_vars['version'] = $this->version;
-		$helper->tpl_vars['author'] = $this->author;
-		$helper->tpl_vars['this_path'] = $this->_path;
-		$helper->toolbar_btn = $this->initToolbar();
-
-		return $helper;
+				<p class="center">
+					<input class="button" type="submit" name="submitSave" value="' . $this->l('Save') . '"/>
+				</p>
+			</fieldset>
+		</form>
+		';
 	}
 
 	protected function _postProcess()
 	{
 		if (Tools::isSubmit('submitSave'))
+		{
 			Configuration::updateValue('universalpay_onepage', (int)Tools::getValue('universalpay_onepage'));
+			$this->_html .= $this->displayConfirmation($this->l('Settings updated.'));
+		}
 	}
 }

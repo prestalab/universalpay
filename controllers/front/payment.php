@@ -1,20 +1,17 @@
 <?php
-class universalpaypaymentModuleFrontController extends ModuleFrontController
+class universalpaypaymentModuleFrontController extends FrontController
 {
 	public $display_column_left = false;
 	public $ssl = true;
 
-	/**
-	 * @see FrontController::initContent()
-	 */
-	public function initContent()
+	public function displayContent()
 	{
-		parent::initContent();
+		parent::displayContent();
 
-		$cart = $this->context->cart;
+		global $cart;
 
 		require_once(dirname(__FILE__). '/../../UniPaySystem.php');
-		$paysistem=new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
+		$paysistem=new UniPaySystem((int)Tools::getValue('id_universalpay_system'), self::$cookie->id_lang);
 
 		if(!Validate::isLoadedObject($paysistem))
 			return ;
@@ -24,14 +21,14 @@ class universalpaypaymentModuleFrontController extends ModuleFrontController
 			array(Tools::DisplayPrice($cart->getOrderTotal(true, Cart::BOTH))),
 			$paysistem->description
 		);
+		$this->module = Module::getInstanceByName('universalpay');
 
-		$this->context->smarty->assign(array(
+		self::$smarty->assign(array(
 			'nbProducts' => $cart->nbProducts(),
 			'paysistem' => $paysistem,
-			'this_path' => $this->module->getPathUri(),
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
 		));
 
-		$this->setTemplate('payment_execution.tpl');
+		echo $this->module->display($this->module->getPathFile(), 'payment_execution.tpl');
 	}
 }

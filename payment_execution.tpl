@@ -11,7 +11,7 @@
 {else}
 
 <h3>{$paysistem->name}</h3>
-<form action="{$link->getModuleLink('universalpay', 'validation', [], true)}" method="post">
+<form action="{$this_path_ssl}validation.php" method="post">
 	{$paysistem->description}
 	<p>
 		<b>{l s='Please confirm your order by clicking \'I confirm my order\'' mod='universalpay'}.</b>
