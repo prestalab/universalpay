@@ -101,9 +101,23 @@ class universalpayvalidationModuleFrontController extends ModuleFrontController
 				'HOOK_PAYMENT_RETURN' => $description_success
 			));
 
-			$this->template = (_PS_THEME_DIR_.'order-confirmation.tpl');
+			$this->setTemplate(_PS_THEME_DIR_.'order-confirmation.tpl');
 		}
 		else
 			Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+	}
+
+	public function setTemplate($default_template)
+	{
+		if ($this->context->getMobileDevice() != false)
+			$this->setMobileTemplate($default_template);
+		else
+		{
+			$template = $this->getOverrideTemplate();
+			if ($template)
+				$this->template=$template;
+			else
+				$this->template=$default_template;
+		}
 	}
 }
