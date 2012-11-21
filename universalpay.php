@@ -5,7 +5,7 @@ class universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3';
+		$this->version = '1.4';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -47,6 +47,7 @@ class universalpay extends PaymentModule
 
 		return parent::install()
 		       && $this->registerHook('displayPayment')
+		       && $this->registerHook('actionCarrierUpdate')
 		       && mkdir(_PS_IMG_DIR_.'pay')
 		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems'), 'AdminParentModules');
 	}
@@ -112,6 +113,13 @@ class universalpay extends PaymentModule
 		}
 		return false;
 	}
+
+	public function hookactionCarrierUpdate($params)
+	{
+		require_once(dirname(__FILE__). '/UniPaySystem.php');
+		UniPaySystem::updateCarrier($params['id_carrier'], $params['carrier']->id);
+	}
+
 
 	public function hookdisplayPayment($params)
 	{

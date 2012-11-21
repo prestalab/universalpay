@@ -83,6 +83,15 @@ class UniPaySystem extends ObjectModel
 			Db::getInstance()->insert('universalpay_system_carrier', $row);
 		}
 	}
+
+	/**
+	 * Update Carrier
+	 */
+	public function updateCarrier($old_carrier_id, $new_carrier_id)
+	{
+		Db::getInstance()->update('universalpay_system_carrier', array('id_carrier'=>(int)$new_carrier_id), 'id_carrier='.(int)$old_carrier_id);
+	}
+
 	/**
 	 * Delete Carrier
 	 */
