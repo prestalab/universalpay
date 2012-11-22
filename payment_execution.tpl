@@ -19,7 +19,7 @@
 	<p class="cart_navigation">
 		<input type="hidden" name="id_universalpay_system" value="{$paysistem->id}" />
 		<input type="submit" name="submit" value="{l s='I confirm my order' mod='universalpay'}" class="exclusive_large" />
-		<a href="{$link->getPageLink('order', true, NULL, "step=3")}" class="button_large">{l s='Other payment methods' mod='universalpay'}</a>
+		<a href="{$link->getPageLink('order.php', true)}?step=3" class="button_large">{l s='Other payment methods' mod='universalpay'}</a>
 	</p>
 </form>
 {/if}

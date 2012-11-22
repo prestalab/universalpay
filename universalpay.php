@@ -49,7 +49,7 @@ class universalpay extends PaymentModule
 		       && $this->registerHook('payment')
 		       && $this->registerHook('updateCarrier')
 		       && mkdir(_PS_IMG_DIR_.'pay')
-		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems'), 'AdminModules');
+		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'it' => 'Metodi di pagamento', 'default' => 'Pay Systems'), 'AdminModules');
 	}
 
 	public function uninstall()
