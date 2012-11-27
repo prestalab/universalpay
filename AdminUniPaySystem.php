@@ -125,7 +125,7 @@ class AdminUniPaySystem extends AdminController
 					'label' => $this->l('Carriers:'),
 					'name' => 'carrierBox',
 					'values' => array(
-						'query' => Carrier::getCarriers($this->context->language->iso_code),
+						'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, $modules_filters = Carrier::ALL_CARRIERS),
 						'id' => 'id_carrier',
 						'name' => 'name'
 					),
