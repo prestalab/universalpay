@@ -5,7 +5,7 @@ class universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4';
+		$this->version = '1.5';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';

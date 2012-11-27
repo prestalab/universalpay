@@ -110,7 +110,7 @@ class AdminUniPaySystem extends AdminTab
 		// CARRIERS
 		echo '<label>'.$this->l('Carriers:').' </label>
 				<div class="margin-form">';
-		$carriers = Carrier::getCarriers($cookie->id_lang);
+		$carriers = Carrier::getCarriers($cookie->id_lang, true, false, false, null, $modules_filters = Carrier::ALL_CARRIERS);
 		$carriers_checked = $obj->getCarriers();
 		foreach($carriers as $carrier)
 					echo'<input type="checkbox" name="carrierBox_'.$carrier['id_carrier'].'" id="carrierBox_'.$carrier['id_carrier'].'" value="1" '.(in_array($carrier['id_carrier'], $carriers_checked) ? 'checked="checked" ' : '').'/>
