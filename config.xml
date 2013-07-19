@@ -2,7 +2,7 @@
         <module>
             <name>universalpay</name>
             <displayName><![CDATA[Универсальный модуль оплаты]]></displayName>
-            <version><![CDATA[1.5]]></version>
+            <version><![CDATA[1.6]]></version>
             <description><![CDATA[Создает методы оплаты]]></description>
             <author><![CDATA[PrestaLab.Ru]]></author>
             <tab><![CDATA[payments_gateways]]></tab>

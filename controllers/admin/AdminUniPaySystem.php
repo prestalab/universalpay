@@ -1,8 +1,8 @@
 <?php
 //require_once(dirname(__FILE__).'/../../classes/AdminTab.php');
-require_once (dirname(__FILE__).'/UniPaySystem.php');
+require_once (dirname(__FILE__) . '/../../UniPaySystem.php');
 
-class AdminUniPaySystem extends AdminController
+class AdminUniPaySystemController extends ModuleAdminController
 {
 	public function __construct()
 	{
@@ -144,7 +144,7 @@ class AdminUniPaySystem extends AdminController
 		// Added values of object Group
 		$universalpay_system_carrier_ids = $obj->getCarriers();
 
-		$carriers = Carrier::getCarriers($this->context->language->id);
+		$carriers = Carrier::getCarriers($this->context->language->id, false, false, false, null, Carrier::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
 
 		foreach ($carriers as $carrier)
 			$this->fields_value['carrierBox_'.$carrier['id_carrier']] = Tools::getValue('carrierBox_'.$carrier['id_carrier'], (in_array($carrier['id_carrier'], $universalpay_system_carrier_ids)));
@@ -158,7 +158,7 @@ class AdminUniPaySystem extends AdminController
 
 		if (Tools::getValue('submitAdd'.$this->table)&&Validate::isLoadedObject($return))
 		{
-			$carriers=Carrier::getCarriers($this->context->language->iso_code);
+			$carriers=Carrier::getCarriers($this->context->language->iso_code, false, false, false, null, Carrier::PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
 			$carrierBox=array();
 			foreach ($carriers as $carrier)
 				if (isset($_POST['carrierBox_'.$carrier['id_carrier']]))
