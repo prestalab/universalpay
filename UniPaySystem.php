@@ -59,6 +59,16 @@ class UniPaySystem extends ObjectModel
 		return $result;
 	}
 
+	public static function getIdByName($name)
+	{
+
+		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+			SELECT id_universalpay_system
+			FROM `'._DB_PREFIX_.'universalpay_system_lang`
+			WHERE `name` = \''.pSQL($name).'\''
+		);
+	}
+
 	public function getCarriers()
 	{
 		$carriers = array();

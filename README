@@ -5,6 +5,9 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+v 1.7
++ added success message displayed in order details page
+
 v 1.4
 + carrier updating fixed
 
