@@ -2,6 +2,16 @@
 
 global $_MODULE;
 $_MODULE = array();
+$_MODULE['<{universalpay}prestashop>universalpay_6d38dff93844d839c18ff54b312d327b'] = 'Универсальный модуль оплаты';
+$_MODULE['<{universalpay}prestashop>universalpay_4135c7ed7be4a58bafe97bbc98c191e9'] = 'Создает методы оплаты';
+$_MODULE['<{universalpay}prestashop>universalpay_c9cc8cce247e49bae79f15173ce97354'] = 'Сохранить';
+$_MODULE['<{universalpay}prestashop>universalpay_f4f70727dc34561dfde1a3c529b6205c'] = 'Настройки';
+$_MODULE['<{universalpay}prestashop>universalpay_94ab57ecb6cd678b5a60cafb8d86dbc1'] = 'Добавьте методы оплаты на';
+$_MODULE['<{universalpay}prestashop>universalpay_522fbb7b9cfeab6672777c23cc4eac8d'] = 'вкладке Платежи>Платежные системы';
+$_MODULE['<{universalpay}prestashop>universalpay_a599c92bfe99c30fe14bee3a9ec90253'] = 'Кнопка подтверждения';
+$_MODULE['<{universalpay}prestashop>universalpay_1e942b304ac381c702b1e20c42a448ef'] = 'Кнопка подтверждения на странице списка платежных систем';
+$_MODULE['<{universalpay}prestashop>universalpay_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Включено';
+$_MODULE['<{universalpay}prestashop>universalpay_b9f5c797ebbf55adccdd8539a65a0241'] = 'Отключено';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_b718adec73e04ce3ec720dd11a06a308'] = 'Ид';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_8c2857a9ad1d8f31659e35e904e20fa6'] = 'Логотип';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_49ee3087348e8d44e1feda1917443987'] = 'Название';
@@ -25,17 +35,9 @@ $_MODULE['<{universalpay}prestashop>adminunipaysystem_4617d8d0a8639a14eb051de337
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_6d448d81cdfb465c458a0f221bbef48d'] = 'Статус заказа при создании.';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_ab8cba13a061fe8d4a330bcc8d6b0175'] = 'Способы доставки:';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_14c5920c988429689db102b62fc72b2c'] = 'Способы доставки совместимые с этим способом оплаты';
+$_MODULE['<{universalpay}prestashop>adminunipaysystem_8783bc7ae2b9e8d93a2bc15150aaefa8'] = 'Группы:';
+$_MODULE['<{universalpay}prestashop>adminunipaysystem_9ba5fe29e0040bbc6593091557681cf4'] = 'Группы покупателей, которым доступен данный способ оплаты';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_38fb7d24e0d60a048f540ecb18e13376'] = 'Сохранить';
-$_MODULE['<{universalpay}prestashop>universalpay_6d38dff93844d839c18ff54b312d327b'] = 'Универсальный модуль оплаты';
-$_MODULE['<{universalpay}prestashop>universalpay_4135c7ed7be4a58bafe97bbc98c191e9'] = 'Создает методы оплаты';
-$_MODULE['<{universalpay}prestashop>universalpay_c9cc8cce247e49bae79f15173ce97354'] = 'Сохранить';
-$_MODULE['<{universalpay}prestashop>universalpay_f4f70727dc34561dfde1a3c529b6205c'] = 'Настройки';
-$_MODULE['<{universalpay}prestashop>universalpay_94ab57ecb6cd678b5a60cafb8d86dbc1'] = 'Добавьте методы оплаты на';
-$_MODULE['<{universalpay}prestashop>universalpay_522fbb7b9cfeab6672777c23cc4eac8d'] = 'вкладке Платежи>Платежные системы';
-$_MODULE['<{universalpay}prestashop>universalpay_a599c92bfe99c30fe14bee3a9ec90253'] = 'Кнопка подтверждения';
-$_MODULE['<{universalpay}prestashop>universalpay_1e942b304ac381c702b1e20c42a448ef'] = 'Кнопка подтверждения на странице списка платежных систем';
-$_MODULE['<{universalpay}prestashop>universalpay_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Включено';
-$_MODULE['<{universalpay}prestashop>universalpay_b9f5c797ebbf55adccdd8539a65a0241'] = 'Отключено';
 $_MODULE['<{universalpay}prestashop>validation_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Этот способ оплаты недоступен';
 $_MODULE['<{universalpay}prestashop>form_a82be0f551b8708bc08eb33cd9ded0cf'] = 'Информация';
 $_MODULE['<{universalpay}prestashop>form_34b6cd75171affba6957e308dcbd92be'] = 'Версия';
