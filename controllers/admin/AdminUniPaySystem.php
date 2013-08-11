@@ -125,11 +125,18 @@ class AdminUniPaySystemController extends ModuleAdminController
 					'label' => $this->l('Carriers:'),
 					'name' => 'carrierBox',
 					'values' => array(
-						'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, $modules_filters = Carrier::ALL_CARRIERS),
+						'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, Carrier::ALL_CARRIERS),
 						'id' => 'id_carrier',
 						'name' => 'name'
 					),
 					'desc' => $this->l('The carriers in which this paysystem is to be used')
+				),
+				array(
+					'type' => 'group',
+					'label' => $this->l('Groups:'),
+					'name' => 'groupBox',
+					'values' => Group::getGroups($this->context->language->id),
+					'desc' => $this->l('The customer groups in which this paysystem is to be used')
 				)
 			),
 			'submit' => array(
@@ -149,6 +156,14 @@ class AdminUniPaySystemController extends ModuleAdminController
 		foreach ($carriers as $carrier)
 			$this->fields_value['carrierBox_'.$carrier['id_carrier']] = Tools::getValue('carrierBox_'.$carrier['id_carrier'], (in_array($carrier['id_carrier'], $universalpay_system_carrier_ids)));
 
+
+		$universalpay_system_group_ids = $obj->getGroups();
+
+		$groups = Group::getGroups($this->context->language->id);
+
+		foreach ($groups as $group)
+			$this->fields_value['groupBox_'.$group['id_group']] = Tools::getValue('groupBox_'.$group['id_group'], (in_array($group['id_group'], $universalpay_system_group_ids)));
+
 		return parent::renderForm();
 	}
 
@@ -164,6 +179,7 @@ class AdminUniPaySystemController extends ModuleAdminController
 				if (isset($_POST['carrierBox_'.$carrier['id_carrier']]))
 					$carrierBox[]=$carrier['id_carrier'];
 			$return->updateCarriers($carrierBox);
+			$return->updateGroups(Tools::getValue('groupBox'));
 		}
 		return $return;
 	}
