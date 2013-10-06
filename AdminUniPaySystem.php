@@ -118,6 +118,17 @@ class AdminUniPaySystem extends AdminTab
 				echo'<div class="clear">'.$this->l('The carriers in which this paysystem is to be used').'</div>
 				</div>';
 
+		// GROUPS
+		echo '<label>'.$this->l('Groups:').' </label>
+				<div class="margin-form">';
+		$groups = Group::getGroups($cookie->id_lang);
+		$groups_checked = $obj->getGroups();
+		foreach($groups as $group)
+			echo'<input type="checkbox" name="groupBox_'.$group['id_group'].'" id="carrierBox_'.$group['id_group'].'" value="1" '.(in_array($group['id_group'], $groups_checked) ? 'checked="checked" ' : '').'/>
+					<label class="t" for="groupBox_'.$carrier['id_group'].'"> '.$group['name'].'</label><br/>';
+		echo'<div class="clear">'.$this->l('The customer groups in which this paysystem is to be used').'</div>
+				</div>';
+
 		// SUBMIT
 		echo '<div class="margin-form">
 					<input type="submit" class="button" name="submitAdd'.$this->table.'" value="'.$this->l('   Save   ').'"/>
@@ -149,6 +160,14 @@ class AdminUniPaySystem extends AdminTab
 				$carrierBox[]=$carrier['id_carrier'];
 
 		$return->updateCarriers($carrierBox);
+
+		$groups=Group::getGroups($cookie->id_lang);
+		$groupBox=array();
+		foreach ($groups as $group)
+			if (isset($_POST['groupBox_'.$group['id_group']]))
+				$groupBox[]=$group['id_group'];
+
+		$return->updateGroups($groupBox);
 		return $return;
 	}
 

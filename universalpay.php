@@ -44,6 +44,11 @@ class universalpay extends PaymentModule
 		  `id_carrier` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_carrier`)
 		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
+		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_group` (
+		  `id_universalpay_system` int(10) unsigned NOT NULL,
+		  `id_group` int(10) unsigned NOT NULL,
+		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
+		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
 
 		return parent::install()
 		       && $this->registerHook('payment')
@@ -130,7 +135,7 @@ class universalpay extends PaymentModule
 		require_once(dirname(__FILE__). '/UniPaySystem.php');
 		global $smarty, $cookie, $cart;
 
-		$paysystems=UniPaySystem::getPaySystems($cookie->id_lang, true, $cart->id_carrier);
+		$paysystems=UniPaySystem::getPaySystems($cookie->id_lang, true, $cart->id_carrier, Customer::getGroupsStatic($cart->id_customer));
 		foreach($paysystems as &$paysystem)
 			$paysystem['description']=str_replace(
 				array('%total%'),

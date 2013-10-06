@@ -16,6 +16,7 @@ class UniPaySystem extends ObjectModel
 	public  $image_dir;
 
 	public  $carrierBox;
+	public  $groupBox;
 
 	protected 	$fieldsValidate = array('active' => 'isBool', 'id_order_state' => 'isUnsignedId');
 	protected 	$fieldsRequiredLang = array('name', 'description_short');
@@ -78,7 +79,7 @@ class UniPaySystem extends ObjectModel
 		return $fields;
 	}
 	
-	public static function getPaySystems($id_lang, $active = true, $id_carrier=false)
+	public static function getPaySystems($id_lang, $active = true, $id_carrier=false, $id_groups=false)
 	{
 	 	if (!Validate::isBool($active))
 	 		die(Tools::displayError());
@@ -88,6 +89,7 @@ class UniPaySystem extends ObjectModel
 			FROM `'._DB_PREFIX_.'universalpay_system` us
 			LEFT JOIN `'._DB_PREFIX_.'universalpay_system_lang` usl ON us.`id_universalpay_system` = usl.`id_universalpay_system`
 			'.($id_carrier?'JOIN `'._DB_PREFIX_.'universalpay_system_carrier` usc ON (us.`id_universalpay_system` = usc.`id_universalpay_system` AND usc.`id_carrier`='.(int)$id_carrier.')':'').'
+			'.($id_groups?'JOIN `'._DB_PREFIX_.'universalpay_system_group` usg ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN ('.implode(',', array_map('intval', $id_groups)).'))':'').'
 			WHERE `id_lang` = '.(int)($id_lang).
 			($active ? ' AND `active` = 1' : '').'
 			ORDER BY us.`position` ASC'
@@ -141,9 +143,49 @@ class UniPaySystem extends ObjectModel
 		);
 	}
 
+	public function getGroups()
+	{
+		$groups = array();
+		$result = Db::getInstance()->executeS('
+			SELECT usg.`id_group`
+			FROM '._DB_PREFIX_.'universalpay_system_group usg
+			WHERE usg.`id_universalpay_system` = '.(int)$this->id
+		);
+		foreach ($result as $group)
+			$groups[] = $group['id_group'];
+		return $groups;
+	}
+
+	public function addGroups($groups)
+	{
+		foreach ($groups as $group)
+		{
+			$row = array('id_universalpay_system' => (int)$this->id, 'id_group' => (int)$group);
+			Db::getInstance()->autoExecute(_DB_PREFIX_.'universalpay_system_group', $row, 'INSERT');
+		}
+	}
+
+	public function updateGroup($old_group_id, $new_group_id)
+	{
+		Db::getInstance()->autoExecute(_DB_PREFIX_.'universalpay_system_group', array('id_group'=>(int)$new_group_id), 'UPDATE', 'id_group='.(int)$old_group_id);
+	}
+
+	/**
+	 * Delete Carrier
+	 */
+	public function deleteGroup($id_group=false)
+	{
+		return Db::getInstance()->execute('
+			DELETE FROM `'._DB_PREFIX_.'universalpay_system_group`
+			WHERE `id_universalpay_system` = '.(int)$this->id.'
+			'.($id_group?'AND `id_group` = '.(int)$id_group.' LIMIT 1':'')
+		);
+	}
+
 	public function delete()
 	{
 		return ($this->deleteCarrier()
+			&&$this->deleteGroup()
 			&&parent::delete()
 			);
 	}
@@ -155,10 +197,18 @@ class UniPaySystem extends ObjectModel
 			$this->addCarriers($list);
 	}
 
+	public function updateGroups($list)
+	{
+		$this->deleteGroup();
+		if ($list && !empty($list))
+			$this->addGroups($list);
+	}
+
 	public function add($autodate = true, $null_values = false)
 	{
 		$ret = parent::add($autodate, $null_values);
 		$this->updateCarriers($this->carrierBox);
+		$this->updateGroups($this->groupBox);
 		return $ret;
 	}
 
