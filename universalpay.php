@@ -137,7 +137,11 @@ class universalpay extends PaymentModule
 			return false;
 
 		$paysystem = new UniPaySystem($id_paysystem, $this->context->cookie->id_lang);
-		return $paysystem->description_success;
+		return str_replace(
+				array('%total%', '%order_number%'),
+				array(Tools::DisplayPrice($params['order']->total_paid), sprintf('#%06d', $params['order']->id)),
+				$paysystem->description_success
+			);
 	}
 
 	public function hookdisplayPayment($params)
