@@ -1,11 +1,11 @@
 <?php
-//require_once(dirname(__FILE__).'/../../classes/AdminTab.php');
 require_once (dirname(__FILE__) . '/../../UniPaySystem.php');
 
 class AdminUniPaySystemController extends ModuleAdminController
 {
 	public function __construct()
 	{
+		$this->bootstrap = true;
 	 	$this->table = 'universalpay_system';
 	 	$this->className = 'UniPaySystem';
 	 	$this->lang = true;
@@ -16,11 +16,11 @@ class AdminUniPaySystemController extends ModuleAdminController
  		$this->fieldImageSettings = array('name' => 'logo', 'dir' => 'pay');
 
 		$this->fields_list = array(
-		'id_universalpay_system' => array('title' => $this->l('ID'), 'align' => 'center', 'width' => 30),
-		'logo' => array('title' => $this->l('Logo'), 'align' => 'center', 'image' => 'pay', 'orderby' => false, 'search' => false),
-		'name' => array('title' => $this->l('Name'), 'width' => 150),
-		'description_short' => array('title' => $this->l('Short description'), 'width' => 450, 'maxlength' => 90, 'orderby' => false),
-		'active' => array('title' => $this->l('Displayed'), 'active' => 'status', 'align' => 'center', 'type' => 'bool', 'orderby' => false)
+			'id_universalpay_system' => array('title' => $this->l('ID'), 'align' => 'center', 'width' => 30),
+			'logo' => array('title' => $this->l('Logo'), 'align' => 'center', 'image' => 'pay', 'orderby' => false, 'search' => false),
+			'name' => array('title' => $this->l('Name'), 'width' => 150),
+			'description_short' => array('title' => $this->l('Short description'), 'width' => 450, 'maxlength' => 90, 'orderby' => false),
+			'active' => array('title' => $this->l('Displayed'), 'active' => 'status', 'align' => 'center', 'type' => 'bool', 'orderby' => false)
 		);
 
 		parent::__construct();
@@ -38,7 +38,7 @@ class AdminUniPaySystemController extends ModuleAdminController
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Payment Systems'),
-				'image' => '../img/admin/tab-categories.gif'
+				'icon' => 'icon-money'
 			),
 			'input' => array(
 				array(
@@ -51,7 +51,7 @@ class AdminUniPaySystemController extends ModuleAdminController
 					'hint' => $this->l('Invalid characters:').' <>;=#{}'
 				),
 				array(
-					'type' => 'radio',
+					'type' => 'switch',
 					'label' => $this->l('Displayed:'),
 					'name' => 'active',
 					'required' => false,
@@ -100,7 +100,7 @@ class AdminUniPaySystemController extends ModuleAdminController
 					'rows' => 5,
 					'cols' => 40,
 					'hint' => $this->l('Invalid characters:').' <>;=#{}',
-					'desc' => $this->l('%order_number% will be replaced with invoice number, %total% will be replaced with total amount.')
+					'desc' => $this->l('%order_number% will be replaced with order reference, %total% will be replaced with total amount.')
 				),
 				array(
 					'type' => 'file',
@@ -140,8 +140,7 @@ class AdminUniPaySystemController extends ModuleAdminController
 				)
 			),
 			'submit' => array(
-				'title' => $this->l('   Save   '),
-				'class' => 'button'
+				'title' => $this->l('Save'),
 			)
 		);
 		
