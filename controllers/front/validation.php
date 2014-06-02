@@ -1,36 +1,8 @@
 <?php
-/*
-* 2007-2012 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2012 PrestaShop SA
-*  @version  Release: $Revision: 15094 $
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
 
-/**
- * @since 1.5.0
- */
-class universalpayvalidationModuleFrontController extends ModuleFrontController
+class universalpayValidationModuleFrontController extends ModuleFrontController
 {
-	public $display_column_left = false;
+
 	public function postProcess()
 	{
 		$cart = $this->context->cart;
@@ -63,17 +35,16 @@ class universalpayvalidationModuleFrontController extends ModuleFrontController
 		if(!Validate::isLoadedObject($paysistem))
 			return ;
 
-		$mailVars =	array(
+		$mailVars = array(
 			'{paysistem_name}' => $paysistem->name
 		);
-
 		$this->module->validateOrder((int)$cart->id, $paysistem->id_order_state, $total, $paysistem->name, NULL, $mailVars, (int)$currency->id, false, $customer->secure_key);
 		if($paysistem->description_success)
 		{
 			$order=new Order($this->module->currentOrder);
 			$description_success=str_replace(
 				array('%total%', '%order_number%'),
-				array(Tools::DisplayPrice($total), sprintf('#%06d', $order->id)),
+				array(Tools::DisplayPrice($total), '#'.$order->reference),
 				$paysistem->description_success
 			);
 
@@ -82,7 +53,7 @@ class universalpayvalidationModuleFrontController extends ModuleFrontController
 				$this->context->smarty->assign(array(
 					'id_order' => $order->id,
 					'reference_order' => $order->reference,
-					'id_order_formatted' => sprintf('#%06d', $order->id),
+					'id_order_formatted' => '#'.$order->reference,
 					'email' => $this->context->customer->email
 				));
 				/* If guest we clear the cookie for security reason */

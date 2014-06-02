@@ -5,6 +5,12 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+V 1.8
++ rewritten to support PrestaShop 1.6
++ text improvment
++ %order_number% return order reference
++ Removed translations, since they no longer are valid, many strings changed.
+
 v 1.7
 + added success message displayed in order details page. you can remove it on Modules/Positions tab
 + added user groups filter
