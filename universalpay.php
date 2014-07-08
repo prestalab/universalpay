@@ -154,7 +154,7 @@ class universalpay extends PaymentModule
 
 		require_once(dirname(__FILE__). '/UniPaySystem.php');
 
-		$paysystems=UniPaySystem::getPaySystems($this->context->language->id, true, $this->context->cart->id_carrier);
+		$paysystems=UniPaySystem::getPaySystems($this->context->language->id, true, $this->context->cart->id_carrier, $this->context->customer->getGroups());
 		foreach($paysystems as &$paysystem)
 			$paysystem['description']=str_replace(
 				array('%total%'),
