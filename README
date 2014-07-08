@@ -5,7 +5,11 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
-V 1.8
+v 1.9
++ BugFix Remove paysystemes based on customer group
++ BugFix Confirmation button
+
+v 1.8
 + rewritten to support PrestaShop 1.6
 + text improvment
 + %order_number% return order reference

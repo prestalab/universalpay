@@ -5,7 +5,7 @@ class universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.8';
+		$this->version = '1.9';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -280,6 +280,6 @@ class universalpay extends PaymentModule
 			if (Configuration::updateValue('universalpay_onepage', (int)Tools::getValue('universalpay_onepage')))
 				return $this->displayConfirmation($this->l('Settings updated'));
 			else
-				return $this->displayError($key.': '.$this->l('Invaild choice'));
+				return $this->displayError($this->l('Confirmation button').': '.$this->l('Invaild choice'));
 	}
 }
