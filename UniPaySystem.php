@@ -56,6 +56,7 @@ class UniPaySystem extends ObjectModel
 			'.(!empty($groups)?'JOIN `'._DB_PREFIX_.'universalpay_system_group` usg ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN ('.implode(',',array_map('intval', $groups)).'))':'').'
 			WHERE `id_lang` = '.(int)($id_lang).
 			($active ? ' AND `active` = 1' : '').'
+			GROUP BY us.`id_universalpay_system`
 			ORDER BY us.`position` ASC'
 		);
 
