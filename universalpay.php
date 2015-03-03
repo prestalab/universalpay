@@ -1,19 +1,32 @@
 <?php
-class universalpay extends PaymentModule
+/**
+ * universalpay module main file.
+ *
+ * @author    0RS <admin@prestalab.ru>
+ * @link http://prestalab.ru/
+ * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
+ * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @version 2.0.0
+ */
+
+class Universalpay extends PaymentModule
 {
 	public function __construct()
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.9.1';
+		$this->version = '2.0.0';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
-		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';
+		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
+		$this->controllers = array('payment', 'validation');
+		$this->ps_versions_compliancy['min'] = '1.6.0';
+		$this->author_uri = 'http://addons.prestashop.com/ru/payments-gateways/5507-universal-payment-module.html';
 
 		$this->currencies = true;
 		$this->currencies_mode = 'checkbox';
 		$this->bootstrap = true;
- 
+
 		parent::__construct();
 
 		$this->displayName = $this->l('Universal Payment Module');
@@ -22,16 +35,16 @@ class universalpay extends PaymentModule
 
 	public function install()
 	{
-		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system` (
+		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system` (
 				`id_universalpay_system` INT(10) NOT NULL AUTO_INCREMENT,
-				`id_order_state` INT( 10 ) NOT NULL DEFAULT  '".Configuration::get('PS_OS_PREPARATION')."',
-				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-				`position` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+				`id_order_state` INT( 10 ) NOT NULL DEFAULT \''.Configuration::get('PS_OS_PREPARATION').'\',
+				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'0\',
+				`position` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
 				`date_add` DATETIME NOT NULL,
 				`date_upd` DATETIME NOT NULL,
 				PRIMARY KEY (`id_universalpay_system`)
-			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
-		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_lang` (
+			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_lang` (
 				`id_universalpay_system` INT(10) UNSIGNED NOT NULL,
 				`id_lang` INT(10) UNSIGNED NOT NULL,
 				`name` VARCHAR(128) NOT NULL,
@@ -39,8 +52,8 @@ class universalpay extends PaymentModule
 				`description` TEXT NULL,
 				`description_success` TEXT NULL,
 				UNIQUE INDEX `universalpay_system_lang_index` (`id_universalpay_system`, `id_lang`)
-			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
-		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_carrier` (
+			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_carrier` (
 		  `id_universalpay_system` int(10) unsigned NOT NULL,
 		  `id_carrier` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_carrier`)
@@ -49,14 +62,19 @@ class universalpay extends PaymentModule
 		  `id_universalpay_system` int(10) unsigned NOT NULL,
 		  `id_group` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
-		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
+		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL');
 
 		return parent::install()
-		       && $this->registerHook('displayPayment')
-		       && $this->registerHook('actionCarrierUpdate')
-		       && $this->registerHook('displayOrderDetail')
-		       && mkdir(_PS_IMG_DIR_.'pay')
-		       && self::installModuleTab('AdminUniPaySystem', array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' =>'Metodi di pagamento'), 'AdminParentModules');
+			&& $this->registerHook('displayPayment')
+			&& $this->registerHook('actionCarrierUpdate')
+			&& $this->registerHook('displayOrderDetail')
+			&& $this->registerHook('displayAdminOrderContentOrder')
+			&& $this->registerHook('displayAdminOrderTabOrder')
+			&& $this->registerHook('displayPaymentReturn')
+			&& mkdir(_PS_IMG_DIR_.'pay')
+			&& self::installModuleTab('AdminUniPaySystem',
+			array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' =>'Metodi di pagamento'), 'AdminParentModules');
 	}
 
 	public function uninstall()
@@ -64,19 +82,26 @@ class universalpay extends PaymentModule
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_lang`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_carrier`');
+		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` DROP  `up_fields`');
 
 		self::uninstallModuleTab('AdminUniPaySystem');
 		return self::rrmdir(_PS_IMG_DIR_.'pay')
-		       && parent::uninstall();
+			&& parent::uninstall();
 	}
 
-	function rrmdir($dir) {
-		if (is_dir($dir)) {
+	public function rrmdir($dir)
+	{
+		if (is_dir($dir))
+		{
 			$objects = scandir($dir);
-			foreach ($objects as $object) {
-				if ($object != "." && $object != "..") {
-				if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object);
-				}
+			foreach ($objects as $object)
+			{
+				if ($object != '.' && $object != '..')
+					if (filetype($dir.'/'.$object) == 'dir')
+						self::rrmdir($dir.'/'.$object);
+					else
+						unlink($dir.'/'.$object);
+
 			}
 			reset($objects);
 			rmdir($dir);
@@ -84,83 +109,107 @@ class universalpay extends PaymentModule
 		return true;
 	}
 
-	private function installModuleTab($tabClass, $tabName, $TabParent)
+	private function installModuleTab($tab_class, $tab_name, $tab_parent)
 	{
-		if(!($idTabParent = Tab::getIdFromClassName($TabParent)))
+		if (!($$id_tab_parent = Tab::getIdFromClassName($tab_parent)))
 			return false;
 
-		@copy(_PS_MODULE_DIR_.$this->name.'/logo.gif', _PS_IMG_DIR_.'t/'.$tabClass.'.gif');
 		$tab = new Tab();
 		$languages = Language::getLanguages(true);
 		foreach ($languages as $language)
 		{
-			if (!isset($tabName[$language['iso_code']]))
-				$tab->name[$language['id_lang']] = $tabName['default'];
+			if (!isset($tab_name[$language['iso_code']]))
+				$tab->name[$language['id_lang']] = $tab_name['default'];
 			else
-				$tab->name[(int)$language['id_lang']] = $tabName[$language['iso_code']];
+				$tab->name[(int)$language['id_lang']] = $tab_name[$language['iso_code']];
 		}
-		$tab->class_name = $tabClass;
+		$tab->class_name = $tab_class;
 		$tab->module = $this->name;
-		$tab->id_parent = $idTabParent;
-		$tab->active= 1;
+		$tab->id_parent = $$id_tab_parent;
+		$tab->active = 1;
 
-		if(!$tab->save())
+		if (!$tab->save())
 			return false;
 		return true;
 	}
 
-	private function uninstallModuleTab($tabClass)
+	private function uninstallModuleTab($tab_class)
 	{
-		$idTab = Tab::getIdFromClassName($tabClass);
-		if($idTab != 0)
+		$id_tab = Tab::getIdFromClassName($tab_class);
+		if ($id_tab != 0)
 		{
-			$tab = new Tab($idTab);
+			$tab = new Tab($id_tab);
 			$tab->delete();
 			return true;
 		}
 		return false;
 	}
 
+	public function hookdisplayPaymentReturn($params)
+	{
+		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
+		$paysistem = new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
+
+		$description_success = str_replace(array('%total%', '%order_number%'),
+			array(Tools::DisplayPrice($params['objOrder']->total_paid), '#'.$params['objOrder']->reference),
+			$paysistem->description_success);
+
+		return '<div class="box">'.$description_success.'</div>';
+	}
+
+	public function hookdisplayAdminOrderTabOrder($params)
+	{
+		return $this->display(__FILE__, 'displayAdminOrderTabOrder.tpl');
+	}
+
+	public function hookdisplayAdminOrderContentOrder($params)
+	{
+		require_once(dirname(__FILE__).'/classes/UpOrder.php');
+		$order = new UpOrder($params['order']->id);
+		$this->smarty->assign(array(
+			'up_fields' => $order->getUpFields()
+		));
+		return $this->display(__FILE__, 'displayAdminOrderContentOrder.tpl');
+	}
+
 	public function hookactionCarrierUpdate($params)
 	{
-		require_once(dirname(__FILE__). '/UniPaySystem.php');
+		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
 		UniPaySystem::updateCarrier($params['id_carrier'], $params['carrier']->id);
 	}
 
 	public function hookdisplayOrderDetail($params)
 	{
-		if($params['order']->module!=$this->name)
+		if ($params['order']->module != $this->name)
 			return false;
 
-		require_once(dirname(__FILE__). '/UniPaySystem.php');
+		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
 
-		if(!($id_paysystem=UniPaySystem::getIdByName($params['order']->payment)))
+		if (!($id_paysystem = UniPaySystem::getIdByName($params['order']->payment)))
 			return false;
 
 		$paysystem = new UniPaySystem($id_paysystem, $this->context->cookie->id_lang);
-		return str_replace(
-				array('%total%', '%order_number%'),
+		return str_replace(array('%total%', '%order_number%'),
 				array(Tools::DisplayPrice($params['order']->total_paid), '#'.$params['order']->reference),
-				$paysystem->description_success
-			);
+				$paysystem->description_success);
 	}
 
 	public function hookdisplayPayment($params)
 	{
 		if (!$this->active)
-			return ;
-		if (!$this->_checkCurrency($params['cart']))
-			return ;
+			return;
+		if (!$this->checkCurrency($params['cart']))
+			return;
 
-		require_once(dirname(__FILE__). '/UniPaySystem.php');
+		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
 
-		$paysystems=UniPaySystem::getPaySystems($this->context->language->id, true, $this->context->cart->id_carrier, $this->context->customer->getGroups());
-		foreach($paysystems as &$paysystem)
-			$paysystem['description']=str_replace(
-				array('%total%'),
+		$paysystems = UniPaySystem::getPaySystems($this->context->language->id, true,
+			$this->context->cart->id_carrier, $this->context->customer->getGroups());
+
+		foreach ($paysystems as &$paysystem)
+			$paysystem['description'] = str_replace(array('%total%'),
 				array(Tools::DisplayPrice($params['cart']->getOrderTotal(true, Cart::BOTH))),
-				$paysystem['description']
-			);
+				$paysystem['description']);
 		unset($paysystem);
 		$this->smarty->assign(array(
 			'this_path' => $this->_path,
@@ -170,10 +219,10 @@ class universalpay extends PaymentModule
 		));
 		return $this->display(__FILE__, 'payment.tpl');
 	}
-	
-	public function _checkCurrency($cart)
+
+	public function checkCurrency($cart)
 	{
-		$currency_order = new Currency((int)($cart->id_currency));
+		$currency_order = new Currency($cart->id_currency);
 		$currencies_module = $this->getCurrency((int)$cart->id_currency);
 
 		if (is_array($currencies_module))
@@ -186,15 +235,8 @@ class universalpay extends PaymentModule
 	public function getContent()
 	{
 		$output = '';
-		$output .= $this->_postProcess();
+		$output .= $this->postProcess();
 		$output .= $this->renderSettingsForm();
-		$output .='<div id="dev_div" style="width:300px;margin-left:15px;margin-top:10px"><br>
-				<span><strong>'.$this->l('Version').': </strong>'.$this->version.'</span><br>
-				<span><strong>'.$this->l('License').':</strong> <a class="link" href="http://www.opensource.org/licenses/osl-3.0.php" target="_blank">OSL 3.0</a></span><br>
-				<span><strong>'.$this->l('Developer').':</strong> <a class="link" href="mailto:admin@prestalab.ru" target="_blank">'.$this->author.'</a><br>
-				<span><strong>'.$this->l('Description').':</strong> <a class="link" href="http://prestalab.ru/moduli-oplaty/46-universalnyj-modul-oplaty.html" target="_blank">PrestaLab.ru</a><br>
-				<p style="text-align:center"><a href="http://prestalab.ru/"><img src="'.$this->_path.'banner.png" alt="'.$this->l('Modules and Templates for PrestaShop').'"/></a></p>
-			</div>';
 		return $output;
 	}
 
@@ -215,7 +257,9 @@ class universalpay extends PaymentModule
 					'title' => $this->l('Settings'),
 					'icon' => 'icon-cogs',
 				),
-				'description' => $this->l('Add payment methods on').' <a href="?tab=AdminUniPaySystem&token='.Tools::getAdminToken('AdminUniPaySystem'.(int)(Tab::getIdFromClassName('AdminUniPaySystem')).(int)($this->context->cookie->id_employee)).'" class="link">'.$this->l('Modules>Pay Systems tab').'</a>',
+				'description' => $this->l('Add payment methods on').' <a href="?tab=AdminUniPaySystem&token='.Tools::getAdminToken('AdminUniPaySystem'.
+						Tab::getIdFromClassName('AdminUniPaySystem').$this->context->cookie->id_employee).
+					'" class="link">'.$this->l('Modules>Pay Systems tab').'</a>',
 				'input' => array(
 					array(
 						'type' => 'switch',
@@ -274,7 +318,7 @@ class universalpay extends PaymentModule
 		return $fields_value;
 	}
 
-	protected function _postProcess()
+	protected function postProcess()
 	{
 		if (Tools::isSubmit('submitSave'))
 			if (Configuration::updateValue('universalpay_onepage', (int)Tools::getValue('universalpay_onepage')))

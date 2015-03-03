@@ -5,6 +5,11 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+v 2.0.0
++ Added input fields before order confirmation
++ BugFix text after confirmation
++ Refractoring
+
 v 1.9
 + BugFix Remove paysystemes based on customer group
 + BugFix Confirmation button

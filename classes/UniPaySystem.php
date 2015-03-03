@@ -1,23 +1,33 @@
 <?php
+/**
+ * universalpay
+ *
+ * @author    0RS <admin@prestalab.ru>
+ * @link http://prestalab.ru/
+ * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
+ * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @version 2.0.0
+ */
+
 class UniPaySystem extends ObjectModel
 {
-	public  $id;
-	public  $active = 1;
-	public  $id_order_state=3;
-	public  $position;
-	public  $date_add;
-	public  $date_upd;
+	public $id;
+	public $active = 1;
+	public $id_order_state = 3;
+	public $position;
+	public $date_add;
+	public $date_upd;
 
-	public  $name;
-	public  $description_short;
-	public  $description;
-	public  $description_success;
+	public $name;
+	public $description_short;
+	public $description;
+	public $description_success;
 
-	public  $image_dir;
+	public $image_dir;
 
-	public  $carrierBox;
+	public $carrier_box;
 
-	public  $groupBox;
+	public $group_box;
 
 	public static $definition = array(
 		'table' => 'universalpay_system',
@@ -38,39 +48,39 @@ class UniPaySystem extends ObjectModel
 		),
 	);
 
-	public function __construct($id = NULL, $id_lang = NULL){
-		$this->image_dir=_PS_IMG_DIR_.'pay/';
+	public function __construct($id = null, $id_lang = null)
+	{
+		$this->image_dir = _PS_IMG_DIR_.'pay/';
 		return parent::__construct($id, $id_lang);
 	}
-	
-	public static function getPaySystems($id_lang, $active = true, $id_carrier=false, $groups=array())
+
+	public static function getPaySystems($id_lang, $active = true, $id_carrier = false, $groups = array())
 	{
-	 	if (!Validate::isBool($active))
-	 		die(Tools::displayError());
+		if (!Validate::isBool($active))
+			die(Tools::displayError());
 
 		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
 			SELECT *
 			FROM `'._DB_PREFIX_.'universalpay_system` us
 			LEFT JOIN `'._DB_PREFIX_.'universalpay_system_lang` usl ON us.`id_universalpay_system` = usl.`id_universalpay_system`
-			'.($id_carrier?'JOIN `'._DB_PREFIX_.'universalpay_system_carrier` usc ON (us.`id_universalpay_system` = usc.`id_universalpay_system` AND usc.`id_carrier`='.(int)$id_carrier.')':'').'
-			'.(!empty($groups)?'JOIN `'._DB_PREFIX_.'universalpay_system_group` usg ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN ('.implode(',',array_map('intval', $groups)).'))':'').'
-			WHERE `id_lang` = '.(int)($id_lang).
+			'.($id_carrier?'JOIN `'._DB_PREFIX_.'universalpay_system_carrier` usc
+			ON (us.`id_universalpay_system` = usc.`id_universalpay_system` AND usc.`id_carrier`='.(int)$id_carrier.')':'').'
+			'.(!empty($groups)?'JOIN `'._DB_PREFIX_.'universalpay_system_group` usg
+			ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN ('.implode(',', array_map('intval', $groups)).'))':'').
+			'WHERE `id_lang` = '.(int)$id_lang.
 			($active ? ' AND `active` = 1' : '').'
 			GROUP BY us.`id_universalpay_system`
-			ORDER BY us.`position` ASC'
-		);
+			ORDER BY us.`position` ASC');
 
 		return $result;
 	}
 
 	public static function getIdByName($name)
 	{
-
 		return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
 			SELECT id_universalpay_system
 			FROM `'._DB_PREFIX_.'universalpay_system_lang`
-			WHERE `name` = \''.pSQL($name).'\''
-		);
+			WHERE `name` = \''.pSQL($name).'\'');
 	}
 
 	public function getCarriers()
@@ -79,8 +89,7 @@ class UniPaySystem extends ObjectModel
 		$result = Db::getInstance()->executeS('
 			SELECT usc.`id_carrier`
 			FROM '._DB_PREFIX_.'universalpay_system_carrier usc
-			WHERE usc.`id_universalpay_system` = '.(int)$this->id
-		);
+			WHERE usc.`id_universalpay_system` = '.(int)$this->id);
 		foreach ($result as $carrier)
 			$carriers[] = $carrier['id_carrier'];
 		return $carriers;
@@ -109,13 +118,12 @@ class UniPaySystem extends ObjectModel
 	/**
 	 * Delete Carrier
 	 */
-	public function deleteCarrier($id_carrier=false)
+	public function deleteCarrier($id_carrier = false)
 	{
 		return Db::getInstance()->execute('
 			DELETE FROM `'._DB_PREFIX_.'universalpay_system_carrier`
 			WHERE `id_universalpay_system` = '.(int)$this->id.'
-			'.($id_carrier?'AND `id_carrier` = '.(int)$id_carrier.' LIMIT 1':'')
-		);
+			'.($id_carrier?'AND `id_carrier` = '.(int)$id_carrier.' LIMIT 1':''));
 	}
 
 	public function getGroups()
@@ -124,8 +132,7 @@ class UniPaySystem extends ObjectModel
 		$result = Db::getInstance()->executeS('
 			SELECT usg.`id_group`
 			FROM '._DB_PREFIX_.'universalpay_system_group usg
-			WHERE usg.`id_universalpay_system` = '.(int)$this->id
-		);
+			WHERE usg.`id_universalpay_system` = '.(int)$this->id);
 		foreach ($result as $carrier)
 			$carriers[] = $carrier['id_group'];
 		return $carriers;
@@ -140,20 +147,19 @@ class UniPaySystem extends ObjectModel
 		}
 	}
 
-	public function deleteGroup($id_group=false)
+	public function deleteGroup($id_group = false)
 	{
 		return Db::getInstance()->execute('
 			DELETE FROM `'._DB_PREFIX_.'universalpay_system_group`
 			WHERE `id_universalpay_system` = '.(int)$this->id.'
-			'.($id_group?'AND `id_group` = '.(int)$id_group.' LIMIT 1':'')
-		);
+			'.($id_group?'AND `id_group` = '.(int)$id_group.' LIMIT 1':''));
 	}
 
 	public function delete()
 	{
 		return ($this->deleteCarrier()
-			&&$this->deleteGroup()
-			&&parent::delete()
+			&& $this->deleteGroup()
+			&& parent::delete()
 			);
 	}
 
@@ -174,18 +180,16 @@ class UniPaySystem extends ObjectModel
 	public function add($autodate = true, $null_values = false)
 	{
 		$ret = parent::add($autodate, $null_values);
-		$this->updateCarriers($this->carrierBox);
-		$this->updateGroups($this->groupBox);
+		$this->updateCarriers($this->carrier_box);
+		$this->updateGroups($this->group_box);
 		return $ret;
 	}
 
 /*	public function update($null_values = false)
 	{
 		$ret = parent::update($null_values);
-		$this->updateCarriers($this->carrierBox);
+		$this->updateCarriers($this->carrier_box);
 		return $ret;
 	}
 */
 }
-
-

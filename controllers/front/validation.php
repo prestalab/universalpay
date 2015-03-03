@@ -1,6 +1,15 @@
 <?php
+/**
+ * universalpay
+ *
+ * @author    0RS <admin@prestalab.ru>
+ * @link http://prestalab.ru/
+ * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
+ * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @version 2.0.0
+ */
 
-class universalpayValidationModuleFrontController extends ModuleFrontController
+class UniversalpayValidationModuleFrontController extends ModuleFrontController
 {
 
 	public function postProcess()
@@ -30,52 +39,36 @@ class universalpayValidationModuleFrontController extends ModuleFrontController
 		$currency = $this->context->currency;
 		$total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
-		require_once(dirname(__FILE__). '/../../UniPaySystem.php');
-		$paysistem=new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
-		if(!Validate::isLoadedObject($paysistem))
-			return ;
+		require_once(dirname(__FILE__).'/../../classes/UniPaySystem.php');
+		$paysistem = new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
+		if (!Validate::isLoadedObject($paysistem))
+			return;
 
-		$mailVars = array(
+		$mail_vars = array(
 			'{paysistem_name}' => $paysistem->name
 		);
-		$this->module->validateOrder((int)$cart->id, $paysistem->id_order_state, $total, $paysistem->name, NULL, $mailVars, (int)$currency->id, false, $customer->secure_key);
-		if($paysistem->description_success)
+
+		$this->module->validateOrder((int)$cart->id, $paysistem->id_order_state, $total, $paysistem->name,
+			null, $mail_vars, (int)$currency->id, false, $customer->secure_key);
+
+		require_once(dirname(__FILE__).'/../../classes/UpOrder.php');
+		$order = new UpOrder($this->module->currentOrder);
+
+		$up_fields = array();
+		foreach ($_POST as $key => $val)
 		{
-			$order=new Order($this->module->currentOrder);
-			$description_success=str_replace(
-				array('%total%', '%order_number%'),
-				array(Tools::DisplayPrice($total), '#'.$order->reference),
-				$paysistem->description_success
-			);
-
-			if ($this->context->customer->is_guest)
-			{
-				$this->context->smarty->assign(array(
-					'id_order' => $order->id,
-					'reference_order' => $order->reference,
-					'id_order_formatted' => '#'.$order->reference,
-					'email' => $this->context->customer->email
-				));
-				/* If guest we clear the cookie for security reason */
-				$this->context->customer->mylogout();
-			}
-
-			$currency = new Currency($order->id_currency);
-			$params['total_to_pay'] = $order->getOrdersTotalPaid();
-			$params['currency'] = $currency->sign;
-			$params['objOrder'] = $order;
-			$params['currencyObj'] = $currency;
-
-			$this->context->smarty->assign(array(
-				'is_guest' => $this->context->customer->is_guest,
-				'HOOK_ORDER_CONFIRMATION' => Hook::exec('displayOrderConfirmation', $params),
-				'HOOK_PAYMENT_RETURN' => $description_success
-			));
-
-			$this->setTemplate(_PS_THEME_DIR_.'order-confirmation.tpl');
+			$key_parts = explode('_', $key);
+			if ($key_parts[0] == 'up')
+				$up_fields[$key_parts[1]] = $val;
 		}
-		else
-			Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+		if (count($up_fields))
+		{
+			$order->setUpFields($up_fields);
+			$order->save();
+		}
+		Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.
+			'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.
+			'&key='.$customer->secure_key.'&id_universalpay_system='.$paysistem->id);
 	}
 
 	public function setTemplate($default_template)
@@ -86,9 +79,9 @@ class universalpayValidationModuleFrontController extends ModuleFrontController
 		{
 			$template = $this->getOverrideTemplate();
 			if ($template)
-				$this->template=$template;
+				$this->template = $template;
 			else
-				$this->template=$default_template;
+				$this->template = $default_template;
 		}
 	}
 }
