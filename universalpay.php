@@ -6,7 +6,7 @@
  * @link http://prestalab.ru/
  * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
  * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- * @version 2.0.0
+ * @version 2.0.1
  */
 
 class Universalpay extends PaymentModule
@@ -15,7 +15,7 @@ class Universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '2.0.0';
+		$this->version = '2.0.1';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -43,7 +43,7 @@ class Universalpay extends PaymentModule
 				`date_add` DATETIME NOT NULL,
 				`date_upd` DATETIME NOT NULL,
 				PRIMARY KEY (`id_universalpay_system`)
-			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_lang` (
 				`id_universalpay_system` INT(10) UNSIGNED NOT NULL,
 				`id_lang` INT(10) UNSIGNED NOT NULL,
@@ -52,17 +52,17 @@ class Universalpay extends PaymentModule
 				`description` TEXT NULL,
 				`description_success` TEXT NULL,
 				UNIQUE INDEX `universalpay_system_lang_index` (`id_universalpay_system`, `id_lang`)
-			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_carrier` (
 		  `id_universalpay_system` int(10) unsigned NOT NULL,
 		  `id_carrier` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_carrier`)
-		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8");
-		Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_group` (
+		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
+		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_group` (
 		  `id_universalpay_system` int(10) unsigned NOT NULL,
 		  `id_group` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
-		) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8');
+		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL');
 
 		return parent::install()
