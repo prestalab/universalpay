@@ -5,7 +5,7 @@ class universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.7';
+		$this->version = '1.7.1';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key='a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -153,7 +153,7 @@ class universalpay extends PaymentModule
 
 		require_once(dirname(__FILE__). '/UniPaySystem.php');
 
-		$paysystems=UniPaySystem::getPaySystems($this->context->language->id, true, $this->context->cart->id_carrier);
+		$paysystems=UniPaySystem::getPaySystems($this->context->language->id, true, $this->context->cart->id_carrier, $this->context->customer->getGroups());
 		foreach($paysystems as &$paysystem)
 			$paysystem['description']=str_replace(
 				array('%total%'),
