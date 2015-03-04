@@ -15,7 +15,7 @@ class Universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '2.0.1';
+		$this->version = '2.0.2';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -149,9 +149,10 @@ class Universalpay extends PaymentModule
 	{
 		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
 		$paysistem = new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
-
-		$description_success = str_replace(array('%total%', '%order_number%'),
-			array(Tools::DisplayPrice($params['objOrder']->total_paid), '#'.$params['objOrder']->reference),
+		$description_success = str_replace(array('%total%', '%order_number%', '%order_id%'),
+			array(Tools::DisplayPrice($params['objOrder']->total_paid),
+				'#'.$params['objOrder']->reference,
+				$params['objOrder']->id),
 			$paysistem->description_success);
 
 		return '<div class="box">'.$description_success.'</div>';
