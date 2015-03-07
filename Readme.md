@@ -6,6 +6,10 @@ Allows you to bind to a payment to carrier
 It does not require programming skills
 
 v 1.7
++ refractoring
++ fixed groups
+
+v 1.7
 + added success message displayed in order details page. you can remove it on Modules/Positions tab
 + added user groups filter
 

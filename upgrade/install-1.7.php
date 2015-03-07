@@ -1,18 +1,23 @@
 <?php
-// Sample file for module update
- 
+/**
+ * universalpay
+ *
+ * @author    0RS <admin@prestalab.ru>
+ * @link http://prestalab.ru/
+ * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
+ * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @version 1.7.2
+ */
+
 if (!defined('_PS_VERSION_'))
-  exit;
- 
-// object module ($this) available
+	exit;
+
 function upgrade_module_1_7($object)
 {
-  return (
-	  $object->registerHook('displayOrderDetail')&&
-		  Db::getInstance()->Execute("CREATE TABLE `"._DB_PREFIX_."universalpay_system_group` (
-			  `id_universalpay_system` int(10) unsigned NOT NULL,
-			  `id_group` int(10) unsigned NOT NULL,
-			  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
-			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8")
-	);
+	return ($object->registerHook('displayOrderDetail')
+		&& Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_group` (
+			`id_universalpay_system` int(10) unsigned NOT NULL,
+			`id_group` int(10) unsigned NOT NULL,
+			UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
+			) ENGINE="._MYSQL_ENGINE_." DEFAULT CHARSET=utf8'));
 }

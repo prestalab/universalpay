@@ -1,5 +1,15 @@
 <?php
-class universalpaypaymentModuleFrontController extends ModuleFrontController
+/**
+ * universalpay
+ *
+ * @author    0RS <admin@prestalab.ru>
+ * @link http://prestalab.ru/
+ * @copyright Copyright &copy; 2009-2015 PrestaLab.Ru
+ * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @version 1.7.2
+ */
+
+class UniversalPaypaymentModuleFrontController extends ModuleFrontController
 {
 	public $display_column_left = false;
 	public $ssl = true;
@@ -13,17 +23,15 @@ class universalpaypaymentModuleFrontController extends ModuleFrontController
 
 		$cart = $this->context->cart;
 
-		require_once(dirname(__FILE__). '/../../UniPaySystem.php');
-		$paysistem=new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
+		require_once(dirname(__FILE__).'/../../UniPaySystem.php');
+		$paysistem = new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
 
-		if(!Validate::isLoadedObject($paysistem))
-			return ;
+		if (!Validate::isLoadedObject($paysistem))
+			return;
 
-		$paysistem->description=str_replace(
-			array('%total%'),
+		$paysistem->description = str_replace(array('%total%'),
 			array(Tools::DisplayPrice($cart->getOrderTotal(true, Cart::BOTH))),
-			$paysistem->description
-		);
+			$paysistem->description);
 
 		$this->context->smarty->assign(array(
 			'nbProducts' => $cart->nbProducts(),
