@@ -111,7 +111,7 @@ class Universalpay extends PaymentModule
 
 	private function installModuleTab($tab_class, $tab_name, $tab_parent)
 	{
-		if (!($$id_tab_parent = Tab::getIdFromClassName($tab_parent)))
+		if (!($id_tab_parent = Tab::getIdFromClassName($tab_parent)))
 			return false;
 
 		$tab = new Tab();
@@ -125,7 +125,7 @@ class Universalpay extends PaymentModule
 		}
 		$tab->class_name = $tab_class;
 		$tab->module = $this->name;
-		$tab->id_parent = $$id_tab_parent;
+		$tab->id_parent = $id_tab_parent;
 		$tab->active = 1;
 
 		if (!$tab->save())
