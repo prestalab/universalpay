@@ -63,7 +63,7 @@ class Universalpay extends PaymentModule
 		  `id_group` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
 		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
-		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL');
+		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL DEFAULT ""');
 
 		return parent::install()
 			&& $this->registerHook('displayPayment')
