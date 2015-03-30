@@ -40,8 +40,8 @@ class Universalpay extends PaymentModule
 				`id_order_state` INT( 10 ) NOT NULL DEFAULT \''.Configuration::get('PS_OS_PREPARATION').'\',
 				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'0\',
 				`position` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
-				`date_add` DATETIME NOT NULL,
-				`date_upd` DATETIME NOT NULL,
+				`date_add` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				`date_upd` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 				PRIMARY KEY (`id_universalpay_system`)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_lang` (
