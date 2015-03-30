@@ -82,6 +82,7 @@ class Universalpay extends PaymentModule
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_lang`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_carrier`');
+		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_group`');
 		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` DROP  `up_fields`');
 
 		self::uninstallModuleTab('AdminUniPaySystem');
