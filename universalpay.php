@@ -40,8 +40,8 @@ class Universalpay extends PaymentModule
 				`id_order_state` INT( 10 ) NOT NULL DEFAULT \''.Configuration::get('PS_OS_PREPARATION').'\',
 				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'0\',
 				`position` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
-				`date_add` DATETIME NOT NULL,
-				`date_upd` DATETIME NOT NULL,
+				`date_add` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				`date_upd` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 				PRIMARY KEY (`id_universalpay_system`)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_lang` (
@@ -63,7 +63,7 @@ class Universalpay extends PaymentModule
 		  `id_group` int(10) unsigned NOT NULL,
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
 		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
-		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL');
+		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL DEFAULT ""');
 
 		return parent::install()
 			&& $this->registerHook('displayPayment')
@@ -82,6 +82,7 @@ class Universalpay extends PaymentModule
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_lang`');
 		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_carrier`');
+		Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.'universalpay_system_group`');
 		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` DROP  `up_fields`');
 
 		self::uninstallModuleTab('AdminUniPaySystem');
