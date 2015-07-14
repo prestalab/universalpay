@@ -44,9 +44,20 @@ class UniversalpayValidationModuleFrontController extends ModuleFrontController
 		if (!Validate::isLoadedObject($paysistem))
 			return;
 
+        $up_fields = array();
+        foreach ($_POST as $key => $val)
+        {
+            $key_parts = explode('_', $key);
+            if ($key_parts[0] == 'up')
+                $up_fields[$key_parts[1]] = $val;
+        }
+
 		$mail_vars = array(
 			'{paysistem_name}' => $paysistem->name
 		);
+
+        foreach ($up_fields as $key => $val)
+            $mail_vars['{up_'.$key.'}'] = $val;
 
 		$this->module->validateOrder((int)$cart->id, $paysistem->id_order_state, $total, $paysistem->name,
 			null, $mail_vars, (int)$currency->id, false, $customer->secure_key);
@@ -54,13 +65,6 @@ class UniversalpayValidationModuleFrontController extends ModuleFrontController
 		require_once(dirname(__FILE__).'/../../classes/UpOrder.php');
 		$order = new UpOrder($this->module->currentOrder);
 
-		$up_fields = array();
-		foreach ($_POST as $key => $val)
-		{
-			$key_parts = explode('_', $key);
-			if ($key_parts[0] == 'up')
-				$up_fields[$key_parts[1]] = $val;
-		}
 		if (count($up_fields))
 		{
 			$order->setUpFields($up_fields);
