@@ -15,7 +15,7 @@ class Universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '2.0.4';
+		$this->version = '2.0.5';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -40,8 +40,8 @@ class Universalpay extends PaymentModule
 				`id_order_state` INT( 10 ) NOT NULL DEFAULT \''.Configuration::get('PS_OS_PREPARATION').'\',
 				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'0\',
 				`position` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
-				`date_add` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				`date_upd` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                `date_add` datetime NOT NULL,
+                `date_upd` datetime NOT NULL,
 				PRIMARY KEY (`id_universalpay_system`)
 			) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_lang` (

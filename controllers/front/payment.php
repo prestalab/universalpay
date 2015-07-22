@@ -12,6 +12,7 @@
 class UniversalPaypaymentModuleFrontController extends ModuleFrontController
 {
 	public $display_column_left = false;
+    public $display_column_right = false;
 	public $ssl = true;
 
 	/**

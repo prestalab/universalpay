@@ -5,6 +5,9 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+v 2.0.5
++ Fixed date_add and date_upd fields
+
 v 2.0.4
 + You can use additional input fields in mail temlplates. E.g. {up_name}
 
