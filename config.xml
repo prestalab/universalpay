@@ -2,7 +2,7 @@
 <module>
 	<name>universalpay</name>
 	<displayName><![CDATA[Universal Payment Module]]></displayName>
-	<version><![CDATA[2.0.5]]></version>
+	<version><![CDATA[2.1.0]]></version>
 	<description><![CDATA[Payment methods creating.]]></description>
 	<author><![CDATA[PrestaLab.Ru]]></author><author_uri><![CDATA[http://addons.prestashop.com/ru/payments-gateways/5507-universal-payment-module.html]]></author_uri>
 	<tab><![CDATA[payments_gateways]]></tab>

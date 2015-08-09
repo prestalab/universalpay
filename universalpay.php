@@ -11,11 +11,12 @@
 
 class Universalpay extends PaymentModule
 {
+	private $paysystems = false;
 	public function __construct()
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '2.0.5';
+		$this->version = '2.1.0';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -72,6 +73,7 @@ class Universalpay extends PaymentModule
 			&& $this->registerHook('displayAdminOrderContentOrder')
 			&& $this->registerHook('displayAdminOrderTabOrder')
 			&& $this->registerHook('displayPaymentReturn')
+			&& $this->registerHook('advancedPaymentOptions')
 			&& mkdir(_PS_IMG_DIR_.'pay')
 			&& self::installModuleTab('AdminUniPaySystem',
 			array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' =>'Metodi di pagamento'), 'AdminParentModules');
@@ -203,6 +205,21 @@ class Universalpay extends PaymentModule
 		if (!$this->checkCurrency($params['cart']))
 			return;
 
+		$paysystems = $this->getPaySystems($params);
+		$this->smarty->assign(array(
+			'this_path' => $this->_path,
+			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
+			'universalpay' => $paysystems,
+			'universalpay_onepage' => Configuration::get('universalpay_onepage'),
+		));
+		return $this->display(__FILE__, 'payment.tpl');
+	}
+
+	public function getPaySystems($params)
+	{
+		if ($this->paysystems)
+			return $this->paysystems;
+
 		require_once(dirname(__FILE__).'/classes/UniPaySystem.php');
 
 		$paysystems = UniPaySystem::getPaySystems($this->context->language->id, true,
@@ -213,13 +230,30 @@ class Universalpay extends PaymentModule
 				array(Tools::DisplayPrice($params['cart']->getOrderTotal(true, Cart::BOTH))),
 				$paysystem['description']);
 		unset($paysystem);
-		$this->smarty->assign(array(
-			'this_path' => $this->_path,
-			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
-			'universalpay' => $paysystems,
-			'universalpay_onepage' => Configuration::get('universalpay_onepage'),
-		));
-		return $this->display(__FILE__, 'payment.tpl');
+		$this->paysystems = $paysystems;
+		return $paysystems;
+	}
+
+	public function hookAdvancedPaymentOptions($params)
+	{
+		if (!$this->active)
+			return;
+		if (!$this->checkCurrency($params['cart']))
+			return;
+
+		$options = array();
+		$paysystems = $this->getPaySystems($params);
+		foreach ($paysystems as $paysystem)
+		{
+			$po = new Core_Business_Payment_PaymentOption();
+			$po->setCallToActionText($paysystem['name'])
+				->setAction($this->context->link->getModuleLink($this->name, 'payment',
+					array('id_universalpay_system' => $paysystem['id_universalpay_system']), true))
+				->setLogo(Media::getMediaPath(_PS_IMG_.'pay/'.$paysystem['id_universalpay_system'].'.jpg'))
+				->setModuleName($this->name);
+			$options[] = $po;
+		}
+		return $options;
 	}
 
 	public function checkCurrency($cart)
