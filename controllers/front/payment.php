@@ -30,8 +30,17 @@ class UniversalPaypaymentModuleFrontController extends ModuleFrontController
 		if (!Validate::isLoadedObject($paysistem))
 			return;
 
+		$total = $cart->getOrderTotal(true, Cart::BOTH);
+		/*if ($paysistem->id_cart_rule) {
+			$cart_rule = new CartRule($paysistem->id_cart_rule);
+			if ($cart_rule->reduction_percent > 0)
+				$total = $total - $total * $cart_rule->reduction_percent / 100;
+			else
+				$total = $total - $cart_rule->reduction_amount;
+		}*/
+
 		$paysistem->description = str_replace(array('%total%'),
-			array(Tools::DisplayPrice($cart->getOrderTotal(true, Cart::BOTH))),
+			array(Tools::DisplayPrice($total)),
 			$paysistem->description);
 
 		$this->context->smarty->assign(array(

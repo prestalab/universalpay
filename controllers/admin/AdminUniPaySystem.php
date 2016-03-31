@@ -140,19 +140,54 @@ class AdminUniPaySystemController extends ModuleAdminController
 						'name' => 'name'
 					),
 					'desc' => $this->l('The carriers in which this paysystem is to be used')
-				),
-				array(
-					'type' => 'group',
-					'label' => $this->l('Groups:'),
-					'name' => 'groupBox',
-					'values' => Group::getGroups($this->context->language->id),
-					'desc' => $this->l('The customer groups in which this paysystem is to be used')
 				)
 			),
 			'submit' => array(
 				'title' => $this->l('Save'),
 			)
 		);
+
+		$cart_rules = array(0 => array('id_cart_rule' => 0, 'name' => $this->l('No discount')));
+
+		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
+			SELECT cr.id_cart_rule, crl.name, cr.reduction_percent, cr.reduction_amount
+			FROM `'._DB_PREFIX_.'cart_rule` cr, `'._DB_PREFIX_.'cart_rule_lang` crl
+			WHERE
+			cr.id_cart_rule = crl.id_cart_rule
+			AND `id_lang` = '.(int)$this->context->language->id.
+			' AND `active` = 1');
+
+		foreach ($result as $discount)
+			$cart_rules[$discount['id_cart_rule']] = array('id_cart_rule' => $discount['id_cart_rule'], 'name' => $discount['name'].' - '.($discount['reduction_percent'] >0 ? $discount['reduction_percent'].'%' : $discount['reduction_amount']));
+
+		if (CartRule::isFeatureActive())
+			$this->fields_form['input'][] = array(
+				'type' => 'select',
+				'label' => $this->l('Order discount:'),
+				'name' => 'id_cart_rule',
+				'desc' =>$this->l('Select cart rule'),
+				'options' => array(
+					'query' => $cart_rules,
+					'name' => 'name',
+					'id' => 'id_cart_rule'
+				)
+			);
+
+		if (Group::isFeatureActive())
+			$this->fields_form['input'][] = array(
+				'type' => 'group',
+				'label' => $this->l('Groups:'),
+				'name' => 'groupBox',
+				'values' => Group::getGroups($this->context->language->id),
+				'desc' => $this->l('The customer groups in which this paysystem is to be used')
+			);
+
+		if (Shop::isFeatureActive())
+			$this->fields_form['input'][] = array(
+				'type' => 'shop',
+				'label' => $this->l('Shop association'),
+				'name' => 'checkBoxShopAsso',
+			);
 
 		if (!($obj = $this->loadObject(true)))
 			return;
@@ -168,11 +203,13 @@ class AdminUniPaySystemController extends ModuleAdminController
 
 		$universalpay_system_group_ids = $obj->getGroups();
 
-		$groups = Group::getGroups($this->context->language->id);
+		if (Group::isFeatureActive()) {
+			$groups = Group::getGroups($this->context->language->id);
 
-		foreach ($groups as $group)
-			$this->fields_value['groupBox_'.$group['id_group']] = Tools::getValue('groupBox_'.$group['id_group'],
-				(in_array($group['id_group'], $universalpay_system_group_ids)));
+			foreach ($groups as $group)
+				$this->fields_value['groupBox_' . $group['id_group']] = Tools::getValue('groupBox_' . $group['id_group'],
+					(in_array($group['id_group'], $universalpay_system_group_ids)));
+		}
 
 		return parent::renderForm();
 	}
@@ -190,7 +227,10 @@ class AdminUniPaySystemController extends ModuleAdminController
 				if (Tools::getIsset('carrierBox_'.$carrier['id_carrier']))
 					$carrier_box[] = $carrier['id_carrier'];
 			$return->updateCarriers($carrier_box);
-			$return->updateGroups(Tools::getValue('groupBox'));
+			if (Group::isFeatureActive())
+				$return->updateGroups(Tools::getValue('groupBox'));
+			if (Shop::isFeatureActive())
+				$this->updateAssoShop($return->id);
 		}
 		return $return;
 	}

@@ -14,6 +14,7 @@ class UniPaySystem extends ObjectModel
 	public $id;
 	public $active = 1;
 	public $id_order_state = 3;
+	public $id_cart_rule = 0;
 	public $position;
 	public $date_add;
 	public $date_upd;
@@ -39,6 +40,7 @@ class UniPaySystem extends ObjectModel
 			'date_add' => 				array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
 			'date_upd' => 				array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
 			'id_order_state' => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+			'id_cart_rule' => 		array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
 
 			/* Lang fields */
 			'name' => 					array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 128),
@@ -52,13 +54,13 @@ class UniPaySystem extends ObjectModel
 	{
 		$this->image_dir = _PS_IMG_DIR_.'pay/';
 		return parent::__construct($id, $id_lang);
+
 	}
 
 	public static function getPaySystems($id_lang, $active = true, $id_carrier = false, $groups = array())
 	{
 		if (!Validate::isBool($active))
 			die(Tools::displayError());
-
 		$result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('
 			SELECT *
 			FROM `'._DB_PREFIX_.'universalpay_system` us
@@ -67,6 +69,7 @@ class UniPaySystem extends ObjectModel
 			ON (us.`id_universalpay_system` = usc.`id_universalpay_system` AND usc.`id_carrier`='.(int)$id_carrier.')':'').'
 			'.(!empty($groups)?'JOIN `'._DB_PREFIX_.'universalpay_system_group` usg
 			ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN ('.implode(',', array_map('intval', $groups)).'))':'').
+			Shop::addSqlAssociation('universalpay_system', 'us').
 			'WHERE `id_lang` = '.(int)$id_lang.
 			($active ? ' AND `active` = 1' : '').'
 			GROUP BY us.`id_universalpay_system`

@@ -16,7 +16,7 @@ class Universalpay extends PaymentModule
 	{
 		$this->name = 'universalpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '2.1.0';
+		$this->version = '2.2.0';
 		$this->author = 'PrestaLab.Ru';
 		$this->need_instance = 1;
 		$this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -32,6 +32,7 @@ class Universalpay extends PaymentModule
 
 		$this->displayName = $this->l('Universal Payment Module');
 		$this->description = $this->l('Payment methods creating.');
+		Shop::addTableAssociation('universalpay_system', array('type' => 'shop'));
 	}
 
 	public function install()
@@ -41,6 +42,7 @@ class Universalpay extends PaymentModule
 				`id_order_state` INT( 10 ) NOT NULL DEFAULT \''.Configuration::get('PS_OS_PREPARATION').'\',
 				`active` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'0\',
 				`position` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
+				`id_cart_rule` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
                 `date_add` datetime NOT NULL,
                 `date_upd` datetime NOT NULL,
 				PRIMARY KEY (`id_universalpay_system`)
@@ -65,6 +67,13 @@ class Universalpay extends PaymentModule
 		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_group`)
 		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 		Db::getInstance()->Execute('ALTER TABLE  `'._DB_PREFIX_.'orders` ADD  `up_fields` VARCHAR( 255 ) NOT NULL DEFAULT ""');
+		Db::getInstance()->Execute('CREATE TABLE `'._DB_PREFIX_.'universalpay_system_shop` (
+		  `id_universalpay_system` int(10) unsigned NOT NULL,
+		  `id_shop` int(10) unsigned NOT NULL,
+		  `date_add` datetime NOT NULL,
+          `date_upd` datetime NOT NULL,
+		  UNIQUE KEY `id_universalpay_system` (`id_universalpay_system`,`id_shop`)
+		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8');
 
 		return parent::install()
 			&& $this->registerHook('displayPayment')
