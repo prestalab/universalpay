@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>universalpay</name>
-	<displayName><![CDATA[Universal Payment Module]]></displayName>
-	<version><![CDATA[2.2.0]]></version>
-	<description><![CDATA[Payment methods creating.]]></description>
-	<author><![CDATA[PrestaLab.Ru]]></author><author_uri><![CDATA[http://addons.prestashop.com/ru/payments-gateways/5507-universal-payment-module.html]]></author_uri>
-	<tab><![CDATA[payments_gateways]]></tab>
-	<is_configurable>1</is_configurable>
-	<need_instance>1</need_instance>
-	<limited_countries></limited_countries>
+    <name>universalpay</name>
+    <displayName><![CDATA[Universal Payment Module]]></displayName>
+    <version><![CDATA[2.2.1]]></version>
+    <description><![CDATA[Payment methods creating.]]></description>
+    <author><![CDATA[PrestaLab.Ru]]></author>
+    <author_uri>
+        <![CDATA[http://addons.prestashop.com/ru/payments-gateways/5507-universal-payment-module.html]]></author_uri>
+    <tab><![CDATA[payments_gateways]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+    <limited_countries></limited_countries>
 </module>

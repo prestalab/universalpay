@@ -5,6 +5,9 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+v 2.2.1
++ Fixed code style
+
 v 2.2.0
 + Assigned cart rule to payment
 + Added multistore
