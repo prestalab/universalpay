@@ -8,7 +8,7 @@
 * @version 2.2.1
 *}
 
-{capture name=path}{$paysistem->name|escape:'htmlall':'UTF-8'}}{/capture}
+{capture name=path}{$paysistem->name|escape:'htmlall':'UTF-8'}{/capture}
 
 <h1 class="page-heading">
     {l s='Order summary' mod='universalpay'}

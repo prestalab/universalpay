@@ -99,6 +99,21 @@ class AdminUniPaySystemController extends ModuleAdminController
                     ),
                 ),
                 array(
+                    'type' => 'select',
+                    'label' => $this->l('Cart type:'),
+                    'name' => 'cart_type',
+                    'required' => false,
+                    'options' => array(
+                        'query' => array(
+                            array('id' => UniPaySystem::CART_BOTH, 'name' => $this->l('Real and virtual')),
+                            array('id' => UniPaySystem::CART_REAL, 'name' => $this->l('Real')),
+                            array('id' => UniPaySystem::CART_VIRTUAL, 'name' => $this->l('Virtual')),
+                        ),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
+                array(
                     'type' => 'textarea',
                     'label' => $this->l('Short description:'),
                     'name' => 'description_short',

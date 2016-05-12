@@ -10,10 +10,15 @@
  */
 class UniPaySystem extends ObjectModel
 {
+    const CART_BOTH = 0;
+    const CART_VIRTUAL = 1;
+    const CART_REAL = 2;
+
     public $id;
     public $active = 1;
     public $id_order_state = 3;
     public $id_cart_rule = 0;
+    public $cart_type = 0;
     public $position;
     public $date_add;
     public $date_upd;
@@ -40,6 +45,7 @@ class UniPaySystem extends ObjectModel
             'date_upd' => array('type' => self::TYPE_DATE, 'shop' => true, 'validate' => 'isDateFormat'),
             'id_order_state' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
             'id_cart_rule' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
+            'cart_type' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
 
             /* Lang fields */
             'name' => array(
