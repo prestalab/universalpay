@@ -143,7 +143,7 @@ class AdminUniPaySystemController extends ModuleAdminController
                     'rows' => 5,
                     'cols' => 40,
                     'hint' => $this->l('Invalid characters:') . ' <>;=#{}',
-                    'desc' => $this->l('%order_number% will be replaced with order reference, %order_number% - order id, %total% - total amount')
+                    'desc' => $this->l('%order_number% will be replaced with order reference, %order_id% - order id, %total% - total amount')
                 ),
                 array(
                     'type' => 'file',

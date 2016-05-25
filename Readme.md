@@ -5,6 +5,10 @@ Creates an unlimited number of fully customizable methods of payment
 Allows you to bind to a payment to carrier
 It does not require programming skills
 
+v 2.3.1
++ Updated russian translation
+- Fixed false error
+
 v 2.3.0
 + Added payments method setting for virtual/real products
 + Fixed confirmation page breadcrumbs

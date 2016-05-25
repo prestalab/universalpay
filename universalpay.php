@@ -16,7 +16,7 @@ class Universalpay extends PaymentModule
     {
         $this->name = 'universalpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.3.0';
+        $this->version = '2.3.1';
         $this->author = 'PrestaLab.Ru';
         $this->need_instance = 1;
         $this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -224,7 +224,6 @@ class Universalpay extends PaymentModule
         }
 
         $virtual = $this->context->cart->isVirtualCart();
-        var_dump($virtual);
         $paysystems = $this->getPaySystems($params);
         foreach ($paysystems as $key => $paysystem)
         {
