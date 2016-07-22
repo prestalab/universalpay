@@ -132,7 +132,7 @@ class AdminUniPaySystemController extends ModuleAdminController
                     'rows' => 5,
                     'cols' => 40,
                     'hint' => $this->l('Invalid characters:') . ' <>;=#{}',
-                    'desc' => $this->l('%total% will be replaced with total amount.')
+                    'desc' => $this->l('%total% will be replaced with total amount.').' '.$this->l('You can use additional input field with name prefixed up_')
                 ),
                 array(
                     'type' => 'textarea',
@@ -143,7 +143,7 @@ class AdminUniPaySystemController extends ModuleAdminController
                     'rows' => 5,
                     'cols' => 40,
                     'hint' => $this->l('Invalid characters:') . ' <>;=#{}',
-                    'desc' => $this->l('%order_number% will be replaced with order reference, %order_id% - order id, %total% - total amount')
+                    'desc' => $this->l('%order_number% will be replaced with order reference, %order_id% - order id, %total% - total amount, %up_field_name - value of input field')
                 ),
                 array(
                     'type' => 'file',

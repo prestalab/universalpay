@@ -16,7 +16,7 @@ class Universalpay extends PaymentModule
     {
         $this->name = 'universalpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.3.1';
+        $this->version = '2.4.0';
         $this->author = 'PrestaLab.Ru';
         $this->need_instance = 1;
         $this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -97,6 +97,7 @@ class Universalpay extends PaymentModule
         Db::getInstance()->Execute('DROP TABLE `' . _DB_PREFIX_ . 'universalpay_system_carrier`');
         Db::getInstance()->Execute('DROP TABLE `' . _DB_PREFIX_ . 'universalpay_system_group`');
         Db::getInstance()->Execute('ALTER TABLE  `' . _DB_PREFIX_ . 'orders` DROP  `up_fields`');
+        Db::getInstance()->Execute('DROP TABLE `' . _DB_PREFIX_ . 'universalpay_system_shop`');
 
         self::uninstallModuleTab('AdminUniPaySystem');
         return self::rrmdir(_PS_IMG_DIR_ . 'pay')
@@ -171,6 +172,12 @@ class Universalpay extends PaymentModule
                 $params['objOrder']->id
             ),
             $paysistem->description_success);
+
+        require_once(dirname(__FILE__) . '/classes/UpOrder.php');
+        $up_order = new UpOrder($params['objOrder']->id);
+        $fields = $up_order->getUpFields();
+        foreach ($fields as $key => $field)
+            $description_success = str_replace('%up_'.$key.'%', $field, $description_success);
 
         return '<div class="box">' . $description_success . '</div>';
     }

@@ -33,8 +33,9 @@ $_MODULE['<{universalpay}prestashop>adminunipaysystem_234078adec0a64008b6ae77653
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_a973d7208bb1ba1588ff414509cf7e4e'] = 'Показывается на странице выбора оплаты.';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_d0042a700e9bdf79689d63ee6846dc0e'] = 'Описание:';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_ccab7bfd5b0b1989d5475c9a1a5effb2'] = '%total% будет заменено суммой заказа.';
+$_MODULE['<{universalpay}prestashop>adminunipaysystem_8b371f658aada382a9f84cf97f32e5f2'] = 'Вы можете добавить дополнительные поля ввода, использовав в их названии префикс up_';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_446e070f627483565661f8a26b4f4849'] = 'Описание после оплаты:';
-$_MODULE['<{universalpay}prestashop>adminunipaysystem_74c290c6abb93d6fea03a2255f849c25'] = '%order_number% заменяется артикулом заказа, %order_id% - номером заказа, %total% - суммой заказа';
+$_MODULE['<{universalpay}prestashop>adminunipaysystem_43a716b942443b553b30037559aab6df'] = '%order_number% - артикул заказа, %order_id% - номер заказа, %total% - сумма, %up_field_name - значения дополнительных полей';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_461900b74731e07320ca79366df3e809'] = 'Картинка:';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_3f8e67d2ef961f473f481b2da4d74f13'] = 'Загрузите логотип оплаты со своего компьютера';
 $_MODULE['<{universalpay}prestashop>adminunipaysystem_4617d8d0a8639a14eb051de337cf5498'] = 'Статус заказа:';

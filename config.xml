@@ -2,7 +2,7 @@
 <module>
     <name>universalpay</name>
     <displayName><![CDATA[Universal Payment Module]]></displayName>
-    <version><![CDATA[2.3.1]]></version>
+    <version><![CDATA[2.4.0]]></version>
     <description><![CDATA[Payment methods creating.]]></description>
     <author><![CDATA[PrestaLab.Ru]]></author>
     <author_uri>
