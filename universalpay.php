@@ -8,6 +8,9 @@
  * @license   http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @version 2.0.1
  */
+
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+
 class Universalpay extends PaymentModule
 {
     private $paysystems = false;
@@ -16,7 +19,7 @@ class Universalpay extends PaymentModule
     {
         $this->name = 'universalpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.4.0';
+        $this->version = '3.0.0';
         $this->author = 'PrestaLab.Ru';
         $this->need_instance = 1;
         $this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
@@ -77,17 +80,16 @@ class Universalpay extends PaymentModule
 		) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8');
 
         return parent::install()
-        && $this->registerHook('displayPayment')
         && $this->registerHook('actionCarrierUpdate')
         && $this->registerHook('displayOrderDetail')
         && $this->registerHook('displayAdminOrderContentOrder')
         && $this->registerHook('displayAdminOrderTabOrder')
         && $this->registerHook('displayPaymentReturn')
-        && $this->registerHook('advancedPaymentOptions')
+        && $this->registerHook('PaymentOptions')
         && mkdir(_PS_IMG_DIR_ . 'pay')
         && self::installModuleTab('AdminUniPaySystem',
             array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' => 'Metodi di pagamento'),
-            'AdminParentModules');
+            'AdminPayment');
     }
 
     public function uninstall()
@@ -130,6 +132,8 @@ class Universalpay extends PaymentModule
             return false;
         }
 
+	$tab_parent = new Tab($id_tab_parent);
+
         $tab = new Tab();
         $languages = Language::getLanguages(true);
         foreach ($languages as $language) {
@@ -141,7 +145,7 @@ class Universalpay extends PaymentModule
         }
         $tab->class_name = $tab_class;
         $tab->module = $this->name;
-        $tab->id_parent = $id_tab_parent;
+        $tab->id_parent = $tab_parent->id_parent;
         $tab->active = 1;
 
         if (!$tab->save()) {
@@ -158,7 +162,7 @@ class Universalpay extends PaymentModule
             $tab->delete();
             return true;
         }
-        return false;
+        return true;
     }
 
     public function hookdisplayPaymentReturn($params)
@@ -167,14 +171,14 @@ class Universalpay extends PaymentModule
         $paysistem = new UniPaySystem((int)Tools::getValue('id_universalpay_system'), $this->context->cookie->id_lang);
         $description_success = str_replace(array('%total%', '%order_number%', '%order_id%'),
             array(
-                Tools::DisplayPrice($params['objOrder']->total_paid),
-                '#' . $params['objOrder']->reference,
-                $params['objOrder']->id
+                Tools::DisplayPrice($params['order']->total_paid),
+                '#' . $params['order']->reference,
+                $params['order']->id
             ),
             $paysistem->description_success);
 
         require_once(dirname(__FILE__) . '/classes/UpOrder.php');
-        $up_order = new UpOrder($params['objOrder']->id);
+        $up_order = new UpOrder($params['order']->id);
         $fields = $up_order->getUpFields();
         foreach ($fields as $key => $field)
             $description_success = str_replace('%up_'.$key.'%', $field, $description_success);
@@ -269,7 +273,7 @@ class Universalpay extends PaymentModule
         return $paysystems;
     }
 
-    public function hookAdvancedPaymentOptions($params)
+    public function hookPaymentOptions($params)
     {
         if (!$this->active) {
             return;
@@ -280,12 +284,14 @@ class Universalpay extends PaymentModule
 
         $options = array();
         $paysystems = $this->getPaySystems($params);
+
         foreach ($paysystems as $paysystem) {
-            $po = new Core_Business_Payment_PaymentOption();
+            $po = new PaymentOption();
             $po->setCallToActionText($paysystem['name'])
                 ->setAction($this->context->link->getModuleLink($this->name, 'payment',
                     array('id_universalpay_system' => $paysystem['id_universalpay_system']), true))
                 ->setLogo(Media::getMediaPath(_PS_IMG_ . 'pay/' . $paysystem['id_universalpay_system'] . '.jpg'))
+                ->setAdditionalInformation($paysystem['description_short'])
                 ->setModuleName($this->name);
             $options[] = $po;
         }

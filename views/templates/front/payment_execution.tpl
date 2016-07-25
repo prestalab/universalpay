@@ -14,9 +14,6 @@
     {l s='Order summary' mod='universalpay'}
 </h1>
 
-{assign var='current_step' value='payment'}
-{include file="$tpl_dir./order-steps.tpl"}
-
 {if $nbProducts <= 0}
     <p class="alert alert-warning">
         {l s='Your shopping cart is empty.' mod='universalpay'}
@@ -28,7 +25,7 @@
                 {$paysistem->name|escape:'html':'UTF-8'}
             </h3>
             <p class="cheque-indent">
-                {$paysistem->description}
+                {$paysistem->description nofilter}
             </p>
             <p>
                 <b>{l s='Please confirm your order by clicking "I confirm my order"' mod='universalpay'}.</b>
