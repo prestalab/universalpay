@@ -178,7 +178,14 @@ class AdminUniPaySystemController extends ModuleAdminController
                         'name' => 'name'
                     ),
                     'desc' => $this->l('The carriers in which this paysystem is to be used')
-                )
+                ),
+		array(
+			'type' => 'group',
+			'label' => $this->l('Groups:'),
+			'name' => 'groupBox',
+			'values' => Group::getGroups($this->context->language->id),
+			'desc' => $this->l('The customer groups in which this paysystem is to be used')
+		)
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
