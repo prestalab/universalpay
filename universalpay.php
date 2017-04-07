@@ -86,7 +86,7 @@ class Universalpay extends PaymentModule
         && $this->registerHook('advancedPaymentOptions')
         && mkdir(_PS_IMG_DIR_ . 'pay')
         && self::installModuleTab('AdminUniPaySystem',
-            array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' => 'Metodi di pagamento'),
+            array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' => 'Metodi di pagamento', 'cs' => 'Platební metody'),
             'AdminParentModules');
     }
 
