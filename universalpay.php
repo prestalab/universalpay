@@ -284,11 +284,12 @@ class Universalpay extends PaymentModule
 
         $options = array();
         $paysystems = $this->getPaySystems($params);
-
+        $action = (int)Configuration::get('universalpay_onepage') ? 'payment' : 'validation';
+	    
         foreach ($paysystems as $paysystem) {
             $po = new PaymentOption();
             $po->setCallToActionText($paysystem['name'])
-                ->setAction($this->context->link->getModuleLink($this->name, 'payment',
+                ->setAction($this->context->link->getModuleLink($this->name, $action,
                     array('id_universalpay_system' => $paysystem['id_universalpay_system']), true))
                 ->setLogo(Media::getMediaPath(_PS_IMG_ . 'pay/' . $paysystem['id_universalpay_system'] . '.jpg'))
                 ->setAdditionalInformation($paysystem['description_short'])
