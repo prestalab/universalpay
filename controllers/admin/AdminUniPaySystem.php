@@ -52,7 +52,25 @@ class AdminUniPaySystemController extends ModuleAdminController
 
         parent::__construct();
     }
-
+	
+    protected function l($string, $class = null, $addslashes = false, $htmlentities = true)
+    {
+        if(Tools::version_compare(_PS_VERSION_,'1.7.0', '>=')){
+            $translated = Context::getContext()->getTranslator()->trans($string);
+            if ($translated !== $string) {
+                return $translated;
+            }        
+            if ($class === null || $class == 'AdminTab') {
+                $class = substr(get_class($this), 0, -10);
+            } elseif (strtolower(substr($class, -10)) == 'controller') {
+                /* classname has changed, from AdminXXX to AdminXXXController, so we remove 10 characters and we keep same keys */
+                $class = substr($class, 0, -10);
+            }
+            return Translate::getAdminTranslation($string, $class, $addslashes, $htmlentities);
+        }else{
+            return parent::l($string);
+        }      
+    }
 
     public function renderForm()
     {
