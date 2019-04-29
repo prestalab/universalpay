@@ -19,7 +19,7 @@ class AdminUniPaySystemController extends ModuleAdminController
         $this->table = 'universalpay_system';
         $this->className = 'UniPaySystem';
         $this->lang = true;
-
+        parent::__construct();
         $this->addRowAction('edit');
         $this->addRowAction('delete');
 
@@ -50,7 +50,6 @@ class AdminUniPaySystemController extends ModuleAdminController
             )
         );
 
-        parent::__construct();
     }
 
 

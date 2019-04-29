@@ -7,7 +7,9 @@
 * @license    http://www.opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 * @version 2.2.1
 *}
+{extends file='page.tpl'}
 
+{block name="page_content"}
 {capture name=path}{$paysistem->name|escape:'htmlall':'UTF-8'}{/capture}
 
 <h1 class="page-heading">
@@ -43,3 +45,4 @@
         </p>
     </form>
 {/if}
+{/block}

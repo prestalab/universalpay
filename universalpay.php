@@ -19,12 +19,12 @@ class Universalpay extends PaymentModule
     {
         $this->name = 'universalpay';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.0';
+        $this->version = '3.1.0';
         $this->author = 'PrestaLab.Ru';
         $this->need_instance = 1;
         $this->module_key = 'a4e3c26ec6e4316dccd6d7da5ca30411';
         $this->controllers = array('payment', 'validation');
-        $this->ps_versions_compliancy['min'] = '1.6.0';
+        $this->ps_versions_compliancy['min'] = '1.7.1';
         $this->author_uri = 'http://addons.prestashop.com/ru/payments-gateways/5507-universal-payment-module.html';
 
         $this->currencies = true;
@@ -89,7 +89,7 @@ class Universalpay extends PaymentModule
         && mkdir(_PS_IMG_DIR_ . 'pay')
         && self::installModuleTab('AdminUniPaySystem',
             array('ru' => 'Платежные системы', 'default' => 'Pay Systems', 'it' => 'Metodi di pagamento'),
-            'AdminPayment');
+            'AdminParentPayment');
     }
 
     public function uninstall()

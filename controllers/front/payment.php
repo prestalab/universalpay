@@ -51,6 +51,6 @@ class UniversalPaypaymentModuleFrontController extends ModuleFrontController
                     true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
 
-        $this->setTemplate('payment_execution.tpl');
+        $this->setTemplate('module:universalpay/views/templates/front/payment_execution.tpl');
     }
 }

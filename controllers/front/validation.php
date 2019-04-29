@@ -85,18 +85,4 @@ class UniversalpayValidationModuleFrontController extends ModuleFrontController
             '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder .
             '&key=' . $customer->secure_key . '&id_universalpay_system=' . $paysistem->id);
     }
-
-    public function setTemplate($default_template)
-    {
-        if ($this->context->getMobileDevice() != false) {
-            $this->setMobileTemplate($default_template);
-        } else {
-            $template = $this->getOverrideTemplate();
-            if ($template) {
-                $this->template = $template;
-            } else {
-                $this->template = $default_template;
-            }
-        }
-    }
 }
