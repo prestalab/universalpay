@@ -82,9 +82,9 @@ class UniPaySystem extends ObjectModel
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->ExecuteS('SELECT *
 			FROM `' . _DB_PREFIX_ . 'universalpay_system` us
 			LEFT JOIN `' . _DB_PREFIX_ . 'universalpay_system_lang` usl ON us.`id_universalpay_system` = usl.`id_universalpay_system`
-			' . ($id_carrier ? 'JOIN `' . _DB_PREFIX_ . 'universalpay_system_carrier` usc
+			' . ($id_carrier ? 'LEFT JOIN `' . _DB_PREFIX_ . 'universalpay_system_carrier` usc
 			ON (us.`id_universalpay_system` = usc.`id_universalpay_system` AND usc.`id_carrier`=' . (int)$id_carrier . ')' : '') . '
-			' . (!empty($groups) && Group::isFeatureActive() ? 'JOIN `' . _DB_PREFIX_ . 'universalpay_system_group` usg
+			' . (!empty($groups) && Group::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'universalpay_system_group` usg
 			ON (us.`id_universalpay_system` = usg.`id_universalpay_system` AND usg.`id_group` IN (' . implode(',',
         array_map('intval', $groups)) . '))' : '') .
             Shop::addSqlAssociation('universalpay_system', 'us') .
